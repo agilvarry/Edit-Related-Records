@@ -26,51 +26,58 @@ import '@esri/calcite-components/dist/components/calcite-label'
 import '@esri/calcite-components/dist/components/calcite-input'
 
 import {
-  CalciteLabel, CalciteInput
+  CalciteLabel
+  // , CalciteInput
   , CalciteTab, CalciteTabNav, CalciteTabs, CalciteTabTitle
 } from '@esri/calcite-components-react'
 import {
-  React, DataSource,
-  AllWidgetProps, DataSourceManager, DataSourceComponent, FeatureLayerQueryParams
+  React, DataSource, AllWidgetProps, DataSourceComponent, FeatureLayerQueryParams, css
 } from 'jimu-core'
-import { Tabs, Tab, Label, Input } from 'jimu-ui'
-
-const { useState, useEffect } = React
+// import { Input } from 'jimu-ui'
+// import { Tabs, Tab, Label, Input } from 'jimu-ui'
 
 /**
  * This widget will show features from a configured feature layer
  */
 export default function Widget(props: AllWidgetProps<{}>) {
-  // const [data, setData] = React.useState<DataSource[]>([]) 
-  const [query, setQuery] = useState<FeatureLayerQueryParams>({
-    where: '1 = 1',
-    outFields: ['*'],
-    pageSize: 10
-  })
+  const isDsConfigured = () => props.useDataSources && props.useDataSources.length >= 0
+  const [globalId, setGlobalId] = React.useState<string>(null)
 
-  const isDsConfigured = () => {
-    if (props.useDataSources &&
-      props.useDataSources.length >= 0) {
-      return true
-    }
-    return false
-  }
   const tabRender = (ds: DataSource) => {
-    console.log(ds.getRecords())
-    return <>
-      <CalciteTab>
-        {ds.getLabel()}
-      </CalciteTab>
-    </>
+    const selectedRecords = ds.getSelectedRecords().map(r => r.getData())
+    if (selectedRecords[0] && selectedRecords[0].globalid !== globalId) {
+      setGlobalId(selectedRecords[0].globalid)
+    }
+
+    const allRecords = ds.getRecords().map(r => r.getData())
+    const res = allRecords.filter(res => res.globalid === globalId || res.parentglobalid === globalId)
+
+    return <CalciteTab>
+      <div className="tab-content" style={{
+        overflow: 'auto'
+      }}>
+        {res && res.map(r => {
+          return <>
+
+            <CalciteLabel> Break </CalciteLabel>
+            {Object.entries(r).map((t, k) => {
+              return <div>
+              <CalciteLabel key={k}>{t[0]}</CalciteLabel>
+              {/* <Input key={k} valid type={typeof t[1] === 'string' ? 'text' : typeof t[1]}></Input> */}
+              </div>
+            })}
+          </>
+        })}
+      </div>
+    </CalciteTab >
   }
 
-  const dataRender = (ds: DataSource) => {
+  const headerRender = (ds: DataSource) => {
     return <>
       <CalciteTabTitle>
         <CalciteLabel>
           {ds.getLabel()}
         </CalciteLabel>
-        {/* <CalciteInput></CalciteInput> */}
       </CalciteTabTitle>
     </>
   }
@@ -86,13 +93,13 @@ export default function Widget(props: AllWidgetProps<{}>) {
       <CalciteTabs >
         <CalciteTabNav slot="title-group">
           {props.useDataSources.map(ds => (
-            <DataSourceComponent useDataSource={ds} query={query} widgetId={props.id} queryCount>
-              {dataRender}
+            <DataSourceComponent useDataSource={ds} query={{ where: '1=1' } as FeatureLayerQueryParams} widgetId={props.id} queryCount>
+              {headerRender}
             </DataSourceComponent>)
           )}
         </CalciteTabNav>
         {props.useDataSources.map(ds => (
-          <DataSourceComponent useDataSource={ds} query={query} widgetId={props.id} queryCount>
+          <DataSourceComponent useDataSource={ds} query={{ where: '1=1' } as FeatureLayerQueryParams} widgetId={props.id} queryCount>
             {tabRender}
           </DataSourceComponent>)
         )}
@@ -100,3 +107,4 @@ export default function Widget(props: AllWidgetProps<{}>) {
     </div >
   }
 }
+
