@@ -1,4 +1,4 @@
-import { React, DataSource, ImmutableArray, UseDataSource, ImmutableObject, DataSourceComponent, FeatureLayerQueryParams, Immutable } from 'jimu-core'
+import { React, DataSource, ImmutableArray, UseDataSource, ImmutableObject, DataSourceComponent, FeatureLayerQueryParams } from 'jimu-core'
 
 interface Props {
   useDataSource: ImmutableArray<UseDataSource>
@@ -12,7 +12,8 @@ export default function FieldSelect (props: Props) {
   const [source, setSource] = React.useState<number>(0)
 
   const datasourceUpdate = () => {
-    const ds = props.useDataSource.filter(ds => ds.dataSourceId === document.getElementById('datSourceSelect').value)[0]
+    const target = document.getElementById('datSourceSelect') as HTMLInputElement | null
+    const ds = props.useDataSource.filter(ds => ds.dataSourceId === target.value)[0] as unknown as UseDataSource //TODO: this fix is real iffy
     const index = props.useDataSource.indexOf(ds)
     setSource(index)
   }
@@ -37,6 +38,7 @@ export default function FieldSelect (props: Props) {
             {ds.getLabel()}
         </option></>)
   }
+
   const Fields = () => {
     return (<DataSourceComponent useDataSource={props.useDataSource[source]} query={{ where: '1=1' } as FeatureLayerQueryParams} widgetId={props.widgetId}>
             {DataSourceFields}
@@ -45,9 +47,7 @@ export default function FieldSelect (props: Props) {
 
   const checkChange = (event: any) => {
     const field = event.target.id
-    console.log(props.useDataSource[source])
     const selected = props.useDataSource[source].fields ? [...props.useDataSource[source].fields] : []
-    console.log(selected)
     if (selected.includes(field)) {
       const result = selected.filter(f => f !== field)
       props.onChange(result, props.useDataSource[source].dataSourceId)
@@ -76,7 +76,6 @@ export default function FieldSelect (props: Props) {
   return (<>
         <form id="fieldSelect">
             <DataSourceSelect />
-
             <Fields />
         </form>
 

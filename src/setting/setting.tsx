@@ -36,7 +36,7 @@ export default function Setting (props: AllWidgetSettingProps<{}>) {
       isMultiple={true}
     />
     {
-      props.useDataSources && props.useDataSources.length > 0 &&
+      props.useDataSources && props.useDataSources.length > 0 && //TODO: check loaded status
       <FieldSelect
         useDataSource={props.useDataSources}
         onChange={onFieldChange}
