@@ -1,21 +1,15 @@
 import { React, Immutable, UseDataSource, AllDataSourceTypes, ImmutableObject } from 'jimu-core'
 import { AllWidgetSettingProps } from 'jimu-for-builder'
-import { DataSourceSelector} from 'jimu-ui/advanced/data-source-selector'
+import { DataSourceSelector } from 'jimu-ui/advanced/data-source-selector'
 import FieldSelect from './fieldSelect'
 export default function Setting (props: AllWidgetSettingProps<{}>) {
-  // const onFieldChange = (allSelectedFields: IMFieldSchema[], ds: DataSource, isSelectedFromRepeatedDataSourceContext: boolean) => {
-  //   props.onSettingChange({
-  //     id: props.id,
-  //     useDataSources: [...props.useDataSources].map(item => item.dataSourceId === ds.id ? { ...item, ...{ fields: allSelectedFields.map(f => f.jimuName) } } : item)
-  //   })
-  // }
+  const onFieldChange = (allSelectedFields: string[], sourceId: string) => {
+    props.onSettingChange({
+      id: props.id,
+      useDataSources: [...props.useDataSources].map(item => item.dataSourceId === sourceId ? { ...item, ...{ fields: allSelectedFields } } : item)
+    })
+  }
 
-  // const onToggleUseDataEnabled = (useDataSourcesEnabled: boolean) => {
-  //   props.onSettingChange({
-  //     id: props.id,
-  //     useDataSourcesEnabled
-  //   }),
-  // }
   const selectedFields = () => {
     let newFields = Immutable({}) as ImmutableObject<{ [dataSourceId: string]: string[] }>
     props.useDataSources.forEach(ds => {
@@ -45,7 +39,7 @@ export default function Setting (props: AllWidgetSettingProps<{}>) {
       props.useDataSources && props.useDataSources.length > 0 &&
       <FieldSelect
         useDataSource={props.useDataSources}
-        // onChange={onFieldChange}
+        onChange={onFieldChange}
         selectedFields={selectedFields() || Immutable([])}
         widgetId={props.id}
       />
