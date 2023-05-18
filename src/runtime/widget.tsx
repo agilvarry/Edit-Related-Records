@@ -23,73 +23,40 @@ import '@esri/calcite-components/dist/components/calcite-tab-nav'
 import '@esri/calcite-components/dist/components/calcite-tab-title'
 import '@esri/calcite-components/dist/components/calcite-notice'
 import '@esri/calcite-components/dist/components/calcite-label'
-import '@esri/calcite-components/dist/components/calcite-input'
 
 import {
-  CalciteLabel
-  // , CalciteInput
-  , CalciteTab, CalciteTabNav, CalciteTabs, CalciteTabTitle
+  CalciteTabNav, CalciteTabs, CalciteTabTitle, CalciteTab
 } from '@esri/calcite-components-react'
 import {
-  React, DataSource, AllWidgetProps, DataSourceComponent, FeatureLayerQueryParams, css
+  React, DataSource, AllWidgetProps, DataSourceComponent, FeatureLayerQueryParams
 } from 'jimu-core'
+import TabBody from './tabBody'
 // import { Input } from 'jimu-ui'
 // import { Tabs, Tab, Label, Input } from 'jimu-ui'
 
 /**
  * This widget will show features from a configured feature layer
  */
-export default function Widget(props: AllWidgetProps<{}>) {
+export default function Widget (props: AllWidgetProps<{}>) {
   const isDsConfigured = () => props.useDataSources && props.useDataSources.length >= 0
   const [globalId, setGlobalId] = React.useState<string>(null)
-
-  const tabRender = (ds: DataSource) => {
-    const selectedRecords = ds.getSelectedRecords().map(r => r.getData())
-    if (selectedRecords[0] && selectedRecords[0].globalid !== globalId) {
-      setGlobalId(selectedRecords[0].globalid)
-    }
-
-    const allRecords = ds.getRecords().map(r => r.getData())
-    const res = allRecords.filter(res => res.globalid === globalId || res.parentglobalid === globalId)
-
-    return <CalciteTab>
-      <div className="tab-content" style={{
-        overflow: 'auto'
-      }}>
-        {res && res.map(r => {
-          return <>
-
-            <CalciteLabel> Break </CalciteLabel>
-            {Object.entries(r).map((t, k) => {
-              return <div>
-              <CalciteLabel key={k}>{t[0]}</CalciteLabel>
-              {/* <Input key={k} valid type={typeof t[1] === 'string' ? 'text' : typeof t[1]}></Input> */}
-              </div>
-            })}
-          </>
-        })}
-      </div>
-    </CalciteTab >
-  }
 
   const headerRender = (ds: DataSource) => {
     return <>
       <CalciteTabTitle>
-        <CalciteLabel>
           {ds.getLabel()}
-        </CalciteLabel>
       </CalciteTabTitle>
     </>
   }
 
   if (!isDsConfigured()) {
     return <h3>
-      This widget aloows you to edit related tables in a feature layer
+      This widget allows you to edit related tables in a feature layer
       <br />
       Configure the data source.
     </h3>
   } else {
-    return <div className="widget-use-feature-layer" style={{ width: '100%', height: '100%' }}>
+    return <div className="widget-use-feature-layer" style={{ width: '100%', height: '100%', overflow: 'auto' }}>
       <CalciteTabs >
         <CalciteTabNav slot="title-group">
           {props.useDataSources.map(ds => (
@@ -99,12 +66,17 @@ export default function Widget(props: AllWidgetProps<{}>) {
           )}
         </CalciteTabNav>
         {props.useDataSources.map(ds => (
-          <DataSourceComponent useDataSource={ds} query={{ where: '1=1' } as FeatureLayerQueryParams} widgetId={props.id} queryCount>
-            {tabRender}
-          </DataSourceComponent>)
+          <CalciteTab>
+          <TabBody
+            globalId={globalId}
+            setGlobalId={setGlobalId}
+            widgetId={props.id}
+            dataSource={ds}
+          />
+          </CalciteTab>
+        )
         )}
       </CalciteTabs>
     </div >
   }
 }
-

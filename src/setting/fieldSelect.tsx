@@ -5,8 +5,8 @@ interface Props {
   selectedFields: ImmutableArray<any> | ImmutableObject<any>
   widgetId: string
   onChange: (fields: string[], sourceId: string) => void
-
 }
+
 export default function FieldSelect (props: Props) {
   const excludeFields = ['parentglobalid', 'objectid', 'globalid']
   const [source, setSource] = React.useState<number>(0)
