@@ -1,14 +1,14 @@
-import { React, ImmutableObject, DataRecord, FieldSchema, ImmutableArray } from 'jimu-core'
+import { React, ImmutableObject, FeatureDataRecord, FieldSchema, ImmutableArray } from 'jimu-core'
 
 interface Props {
-  dataRecord: DataRecord
-  selectedFields: any[] | ImmutableArray<string>
+  dataRecord: FeatureDataRecord
+  selectedFields: string[] | ImmutableArray<string>
   fieldSchema: ImmutableObject<{ [jimuName: string]: FieldSchema }>
-  updateRecord: (record: DataRecord) => Promise<boolean>
+  updateRecord: (record: FeatureDataRecord, objectidField: string) => void
 }
 
 export default function RecordForm ({ dataRecord, selectedFields, fieldSchema, updateRecord }: Props) {
-  const getValues = (dataRecord: DataRecord): Object => {
+  const getValues = (dataRecord: FeatureDataRecord) => {
     const entries = Object.entries(dataRecord)
 
     const values = {}
@@ -28,14 +28,12 @@ export default function RecordForm ({ dataRecord, selectedFields, fieldSchema, u
   const [formValues, setFormValues] = React.useState<Object>(getValues(dataRecord))
 
   const onSubmit = () => {
+    const objectid = Object.prototype.hasOwnProperty.call(dataRecord, 'OBJECTID') ? 'OBJECTID' : 'objectid'
     const record = { ...dataRecord }
     for (const key of selectedFields) {
       record[key] = formValues[key]
     }
-    console.log(record)
-    updateRecord(record).then(res => {
-      console.log(res)
-    })
+    updateRecord(record, objectid)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -45,7 +43,6 @@ export default function RecordForm ({ dataRecord, selectedFields, fieldSchema, u
     }
     setFormValues(v)
   }
-  //   const objectid = Object.prototype.hasOwnProperty.call(dataRecord, 'OBJECTID') ? 'OBJECTID' : 'objectid'
   return <div>
     {
       selectedFields.map((f: string) => {
