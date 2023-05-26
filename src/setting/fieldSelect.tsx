@@ -58,6 +58,7 @@ export default function FieldSelect (props: Props) {
   }
 
   const DataSourceFields = (ds: DataSource) => {
+    console.log(ds.fetchSchema())
     const alreadySelected = props.useDataSource[source].fields || []
     const fields = ds.getRecords().map(r => r.getData())[0]
     const keys = Object.keys(fields).filter(k => !excludeFields.includes(k.toLowerCase()))

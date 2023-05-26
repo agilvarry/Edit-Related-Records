@@ -30,6 +30,7 @@ export default function Setting (props: AllWidgetSettingProps<{}>) {
       types={Immutable([AllDataSourceTypes.FeatureLayer])}
       useDataSources={props.useDataSources}
       useDataSourcesEnabled={true}
+      mustUseDataSource={true}
       onChange={onDataSourceChange}
       widgetId={props.id}
       isMultiple={true}

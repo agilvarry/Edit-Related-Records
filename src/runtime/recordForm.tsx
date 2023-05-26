@@ -10,7 +10,7 @@ interface Props {
 export default function RecordForm ({ dataRecord, selectedFields, fieldSchema, updateRecord }: Props) {
   const getValues = (dataRecord: FeatureDataRecord) => {
     const entries = Object.entries(dataRecord)
-
+    // console.log(dataRecord, selectedFields, fieldSchema)
     const values = {}
     entries.forEach(v => {
       const type = fieldSchema[v[0]].esriType
