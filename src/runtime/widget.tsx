@@ -1,13 +1,8 @@
-import '@esri/calcite-components/dist/components/calcite-tabs'
-import '@esri/calcite-components/dist/components/calcite-tab'
-import '@esri/calcite-components/dist/components/calcite-tab-nav'
-import '@esri/calcite-components/dist/components/calcite-tab-title'
-
 import {
   CalciteTabNav, CalciteTabs, CalciteTabTitle, CalciteTab
-} from '@esri/calcite-components-react'
+} from 'calcite-components'
 import {
-  React, DataSource, AllWidgetProps, DataSourceComponent, FeatureLayerQueryParams, getAppStore
+  React, DataSource, AllWidgetProps, DataSourceComponent, FeatureLayerQueryParams
 } from 'jimu-core'
 import TabBody from './tabBody'
 
@@ -16,17 +11,12 @@ import TabBody from './tabBody'
  */
 export default function Widget (props: AllWidgetProps<{}>) {
   const isDsConfigured = () => props.useDataSources && props.useDataSources.length > 0
-  const store = getAppStore()
-  const dataId = store.getState().queryObject.data_id
-  console.log(dataId)
   const [globalId, setGlobalId] = React.useState<string>(null)
 
   const headerRender = (ds: DataSource) => {
-    return <>
-      <CalciteTabTitle>
-        {ds.getLabel()}
-      </CalciteTabTitle>
-    </>
+    return <CalciteTabTitle >
+      {ds.getLabel()}
+    </CalciteTabTitle>
   }
 
   if (!isDsConfigured()) {
@@ -47,12 +37,12 @@ export default function Widget (props: AllWidgetProps<{}>) {
         </CalciteTabNav>
         {props.useDataSources.map(ds => (
           <CalciteTab>
-            <TabBody key={ds.mainDataSourceId}
-              globalId={globalId}
-              setGlobalId={setGlobalId}
-              widgetId={props.id}
-              dataSource={ds}
-            />
+                <TabBody key={ds.mainDataSourceId}
+                  globalId={globalId}
+                  setGlobalId={setGlobalId}
+                  widgetId={props.id}
+                  dataSource={ds}
+                />
           </CalciteTab>
         )
         )}

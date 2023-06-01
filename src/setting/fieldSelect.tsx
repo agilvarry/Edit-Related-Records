@@ -1,4 +1,4 @@
-import { React, DataSource, ImmutableArray, UseDataSource, ImmutableObject, DataSourceComponent, FeatureLayerQueryParams } from 'jimu-core'
+import { React, DataSource, ImmutableArray, UseDataSource, ImmutableObject, DataSourceComponent, FeatureLayerQueryParams, IMDataSourceInfo } from 'jimu-core'
 
 interface Props {
   useDataSource: ImmutableArray<UseDataSource>
@@ -19,30 +19,33 @@ export default function FieldSelect (props: Props) {
   }
   const DataSourceSelect = () => {
     return (<>
-            Data Source <br/>
-            <select
-                id="datSourceSelect"
-                aria-describedby="id1 id2"
-                onChange={datasourceUpdate}>
-                {props.useDataSource.map(ds => (
-                    <DataSourceComponent useDataSource={ds} query={{ where: '1=1' } as FeatureLayerQueryParams} widgetId={props.widgetId}>
-                        {DataSourceOptions}
-                    </DataSourceComponent>)
-                )}
-            </select>
-        </>)
+      Data Source <br />
+      <select
+        id="datSourceSelect"
+        aria-describedby="id1 id2"
+        onChange={datasourceUpdate}>
+        {props.useDataSource.map(ds => (
+          <DataSourceComponent useDataSource={ds} query={{ where: '1=1' } as FeatureLayerQueryParams} widgetId={props.widgetId}>
+            {DataSourceOptions}
+          </DataSourceComponent>)
+        )}
+      </select>
+    </>)
   }
 
-  const DataSourceOptions = (ds: DataSource) => {
+  const DataSourceOptions = (ds: DataSource, info: IMDataSourceInfo) => {
+    if (info.status !== 'LOADED') {
+      return null
+    }
     return (<><option value={ds.id} selected={ds.id === props.useDataSource[source].dataSourceId}>
-            {ds.getLabel()}
-        </option></>)
+      {ds.getLabel()}
+    </option></>)
   }
 
   const Fields = () => {
     return (<DataSourceComponent useDataSource={props.useDataSource[source]} query={{ where: '1=1' } as FeatureLayerQueryParams} widgetId={props.widgetId}>
-            {DataSourceFields}
-        </DataSourceComponent>)
+      {DataSourceFields}
+    </DataSourceComponent>)
   }
 
   const checkChange = (event: any) => {
@@ -57,28 +60,32 @@ export default function FieldSelect (props: Props) {
     }
   }
 
-  const DataSourceFields = (ds: DataSource) => {
-    console.log(ds.fetchSchema())
+  const DataSourceFields = (ds: DataSource, info: IMDataSourceInfo) => {
+    if (info.status !== 'LOADED') {
+      return null
+    }
     const alreadySelected = props.useDataSource[source].fields || []
-    const fields = ds.getRecords().map(r => r.getData())[0]
-    const keys = Object.keys(fields).filter(k => !excludeFields.includes(k.toLowerCase()))
+    const records = ds.getRecords()
+    const fields = records.map(r => r.getData())[0]
+
+    const keys = fields && Object.keys(fields).filter(k => !excludeFields.includes(k.toLowerCase()))
     console.log(keys)
     return (<fieldset>
-            Fields
-            {keys.map(k => (
-                <div>
-                    <input type="checkbox" onChange={checkChange} id={k} name={k} checked={alreadySelected.includes(k)}/>
-                    <label htmlFor={k}>{k}</label>
-                </div>
-            ))}
-        </fieldset>)
+      Fields
+      {keys.map(k => (
+        <div>
+          <input type="checkbox" onChange={checkChange} id={k} name={k} checked={alreadySelected.includes(k)} />
+          <label htmlFor={k}>{k}</label>
+        </div>
+      ))}
+    </fieldset>)
   }
 
   return (<>
-        <form id="fieldSelect">
-            <DataSourceSelect />
-            <Fields />
-        </form>
+    <form id="fieldSelect">
+      <DataSourceSelect />
+      <Fields />
+    </form>
 
-    </>)
+  </>)
 }
