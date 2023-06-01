@@ -1,7 +1,7 @@
-import { React, UseDataSource, ImmutableObject, DataSourceComponent, FeatureLayerQueryParams, FeatureLayerDataSource, FeatureDataRecord, IMDataSourceInfo, DataRecord } from 'jimu-core'
+import { React, UseDataSource, ImmutableObject, DataSourceComponent, FeatureLayerQueryParams, FeatureLayerDataSource, FeatureDataRecord, IMDataSourceInfo } from 'jimu-core'
 import RecordForm from './recordForm'
 import {
-  CalciteFlow, CalciteFlowItem, CalciteList, CalciteListItem
+  CalciteFlow, CalciteFlowItem, CalciteList, CalciteListItem, CalcitePanel
 } from 'calcite-components'
 interface Props {
   dataSource: ImmutableObject<UseDataSource>
@@ -10,7 +10,7 @@ interface Props {
   widgetId: string
 }
 
-export default function TabBody(props: Props) {
+export default function TabBody (props: Props) {
   const [ds, setDS] = React.useState<FeatureLayerDataSource>(null)
   const query: FeatureLayerQueryParams = { where: '1=1', pageSize: 1000 } //TODO: setting this to 1000 fixed my perplexing issue but it makes things load slow.
   const [selected, setSelected] = React.useState<FeatureDataRecord>(null)
@@ -71,21 +71,24 @@ export default function TabBody(props: Props) {
     const data = allData.filter(res => res.globalid === props.globalId || res.parentglobalid === props.globalId || res.ParentGlobalID === props.globalId)
 
     if (ds) {
-      return selected
-        ? <RecordForm
-          fieldSchema={ds.getFetchedSchema().fields}
-          dataRecord={selected}
-          selectedFields={props.dataSource.fields}
-          updateRecord={updateRecord}
-        />
-        : <div className="tab-content" style={{ overflow: 'auto' }}>
-          <CalciteList>
-            {data.map(d => {
-              const objectid = Object.prototype.hasOwnProperty.call(d, 'OBJECTID') ? 'OBJECTID' : 'objectid'
-              return <CalciteListItem label={d[objectid]} description={buildDescription(d)} onCalciteListItemSelect={() => itemSelected(d)} ></CalciteListItem>
-            })}
-          </CalciteList>
-        </div >
+      return <CalcitePanel>
+        {selected
+          ? <RecordForm
+            fieldSchema={ds.getFetchedSchema().fields}
+            dataRecord={selected}
+            selectedFields={props.dataSource.fields}
+            updateRecord={updateRecord}
+            cancelUpdate={removeSelected}
+          />
+          : <div className="tab-content" style={{ overflow: 'auto' }}>
+            <CalciteList>
+              {data.map(d => {
+                const objectid = Object.prototype.hasOwnProperty.call(d, 'OBJECTID') ? 'OBJECTID' : 'objectid'
+                return <CalciteListItem label={d[objectid]} description={buildDescription(d)} onCalciteListItemSelect={() => itemSelected(d)} ></CalciteListItem>
+              })}
+            </CalciteList>
+          </div >}
+      </CalcitePanel>
     } else {
       //TODO: IDK if this is ever returned
       return <h3>

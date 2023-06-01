@@ -1,0 +1,19 @@
+{
+  "name": "udot-table-editing",
+  "version": "0.1.0",
+  "description": "ArcGIS Experience builder Widget for editing related tables in a form",
+  "main": "widget.tsx",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/utahudot/UDOT-Table-Editing.git"
+  },
+  "author": "Alex Gilvarry",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/utahudot/UDOT-Table-Editing/issues"
+  },
+  "homepage": "https://github.com/utahudot/UDOT-Table-Editing#readme"
+}
