@@ -1,5 +1,8 @@
 import { React, DataSource, ImmutableArray, UseDataSource, ImmutableObject, DataSourceComponent, FeatureLayerQueryParams, IMDataSourceInfo } from 'jimu-core'
 
+import {
+  CalciteSelect, CalciteOption
+} from 'calcite-components'
 interface Props {
   useDataSource: ImmutableArray<UseDataSource>
   selectedFields: ImmutableArray<any> | ImmutableObject<any>
@@ -11,41 +14,40 @@ export default function FieldSelect (props: Props) {
   const excludeFields = ['parentglobalid', 'objectid', 'globalid']
   const [source, setSource] = React.useState<number>(0)
 
-  const datasourceUpdate = () => {
-    const target = document.getElementById('datSourceSelect') as HTMLInputElement | null
-    const ds = props.useDataSource.filter(ds => ds.dataSourceId === target.value)[0] as unknown as UseDataSource //TODO: this fix is real iffy
+  const datasourceUpdate = (e: any) => {
+    const ds = props.useDataSource.filter(ds => ds.dataSourceId === e.target.value)[0] as unknown as UseDataSource //TODO: this fix is real iffy
     const index = props.useDataSource.indexOf(ds)
     setSource(index)
   }
   const DataSourceSelect = () => {
-    return (<>
-      Data Source <br />
-      <select
-        id="datSourceSelect"
-        aria-describedby="id1 id2"
-        onChange={datasourceUpdate}>
+    return <>
+      Data Source
+      <CalciteSelect
+        id= "datSourceSelect"
+        label="datSourceSelect"
+        onCalciteSelectChange={datasourceUpdate}>
         {props.useDataSource.map(ds => (
           <DataSourceComponent useDataSource={ds} query={{ where: '1=1' } as FeatureLayerQueryParams} widgetId={props.widgetId}>
             {DataSourceOptions}
           </DataSourceComponent>)
         )}
-      </select>
-    </>)
+      </CalciteSelect>
+    </>
   }
 
   const DataSourceOptions = (ds: DataSource, info: IMDataSourceInfo) => {
     if (info.status !== 'LOADED') {
       return null
     }
-    return (<><option value={ds.id} selected={ds.id === props.useDataSource[source].dataSourceId}>
+    return <CalciteOption key={ds.id} value={ds.id} selected={ds.id === props.useDataSource[source].dataSourceId}>
       {ds.getLabel()}
-    </option></>)
+    </CalciteOption>
   }
 
   const Fields = () => {
-    return (<DataSourceComponent useDataSource={props.useDataSource[source]} query={{ where: '1=1' } as FeatureLayerQueryParams} widgetId={props.widgetId}>
+    return <DataSourceComponent useDataSource={props.useDataSource[source]} query={{ where: '1=1' } as FeatureLayerQueryParams} widgetId={props.widgetId}>
       {DataSourceFields}
-    </DataSourceComponent>)
+    </DataSourceComponent>
   }
 
   const checkChange = (event: any) => {

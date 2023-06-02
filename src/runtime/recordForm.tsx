@@ -12,6 +12,7 @@ interface Props {
 }
 
 export default function RecordForm ({ cancelUpdate, dataRecord, selectedFields, fieldSchema, updateRecord }: Props) {
+  console.log(fieldSchema)
   const getValues = (dataRecord: FeatureDataRecord) => {
     const entries = Object.entries(dataRecord)
 
@@ -19,7 +20,6 @@ export default function RecordForm ({ cancelUpdate, dataRecord, selectedFields, 
     entries.forEach(v => {
       const type = fieldSchema[v[0]].esriType
       if (type === 'esriFieldTypeDate') {
-        console.log(v)
         const date = new Date(v[1])
         const iso = date.toISOString() //TODO: we need iso string for stuff, update in handle change and getValues
         values[v[0]] = iso.split('T')[0]
@@ -50,7 +50,6 @@ export default function RecordForm ({ cancelUpdate, dataRecord, selectedFields, 
   }
 
   const handleChange = (e: any): void => { //TODO: need to figure Calcite Event Type
-    console.log(e)
     const v = {
       ...formValues, [e.target.id]: e.target.value
     }
@@ -60,6 +59,7 @@ export default function RecordForm ({ cancelUpdate, dataRecord, selectedFields, 
     {
       selectedFields.map((f: string) => {
         const type = fieldSchema[f].esriType
+        const alias = fieldSchema[f].alias
         let val: JSX.Element
         if (type === 'esriFieldTypeString') {
           val = <CalciteInputText id={f} onCalciteInputTextInput={handleChange} value={formValues[f]}></CalciteInputText>
@@ -71,7 +71,7 @@ export default function RecordForm ({ cancelUpdate, dataRecord, selectedFields, 
           val = <CalciteInput id={f} read-only>{f} {type} {dataRecord[f]}</CalciteInput>
         }
         return <CalciteLabel>
-          {f}
+          {alias}
           {val}
         </CalciteLabel>
       })
