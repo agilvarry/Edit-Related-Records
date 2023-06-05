@@ -10,9 +10,14 @@ import TabBody from './tabBody'
  * This widget will show features from a configured feature layer
  */
 export default function Widget (props: AllWidgetProps<{}>) {
-  const isDsConfigured = () => props.useDataSources && props.useDataSources.length > 0
+  console.log(props.config)
+  const isDsConfigured = () => props.useDataSources && props.useDataSources.length > 0 && configPropsForAllLayers
   const [globalId, setGlobalId] = React.useState<string>(null)
 
+  const configPropsForAllLayers = (): boolean => {
+    const ids = props.useDataSources.map(ds => ds.dataSourceId)
+    return ids.every(id => Object.prototype.hasOwnProperty.call(props.config, id))
+  }
   const headerRender = (ds: DataSource) => {
     return <CalciteTabTitle >
       {ds.getLabel()}
@@ -42,6 +47,7 @@ export default function Widget (props: AllWidgetProps<{}>) {
                   setGlobalId={setGlobalId}
                   widgetId={props.id}
                   dataSource={ds}
+                  config={props.config[ds.dataSourceId]}
                 />
           </CalciteTab>
         )

@@ -3,11 +3,18 @@ import RecordForm from './recordForm'
 import {
   CalciteFlow, CalciteFlowItem, CalciteList, CalciteListItem, CalcitePanel
 } from 'calcite-components'
+
+interface configProps {
+  foreignKey: string
+  header: string
+  subHeader: string
+}
 interface Props {
   dataSource: ImmutableObject<UseDataSource>
   globalId: string
   setGlobalId: (globalId: string) => void
   widgetId: string
+  config: configProps
 }
 
 export default function TabBody (props: Props) {
@@ -41,11 +48,6 @@ export default function TabBody (props: Props) {
       console.log('error = ', error)
     })
   }
-  const buildDescription = (data: any): string => {
-    const description = ''
-
-    return description
-  }
 
   const itemSelected = (data: FeatureDataRecord) => {
     setSelected(data)
@@ -68,9 +70,10 @@ export default function TabBody (props: Props) {
 
     const allRecords = ds.getRecords()
     const allData = allRecords.map(r => r.getData())
-    const data = allData.filter(res => res.globalid === props.globalId || res.parentglobalid === props.globalId || res.ParentGlobalID === props.globalId)
+    console.log(props.config.foreignKey)
+    const data = allData.filter(res => res.globalid === props.globalId || res[props.config.foreignKey] === props.globalId)
 
-    if (ds) {
+    if (ds && props.config.foreignKey && props.config.header && props.config.subHeader) {
       return <CalcitePanel>
         {selected
           ? <RecordForm
@@ -83,8 +86,7 @@ export default function TabBody (props: Props) {
           : <div className="tab-content" style={{ overflow: 'auto' }}>
             <CalciteList>
               {data.map(d => {
-                const objectid = Object.prototype.hasOwnProperty.call(d, 'OBJECTID') ? 'OBJECTID' : 'objectid'
-                return <CalciteListItem label={d[objectid]} description={buildDescription(d)} onCalciteListItemSelect={() => itemSelected(d)} ></CalciteListItem>
+                return <CalciteListItem label={props.config.header} description={props.config.subHeader} onCalciteListItemSelect={() => itemSelected(d)} ></CalciteListItem>
               })}
             </CalciteList>
           </div >}

@@ -1,12 +1,27 @@
 import { React, Immutable, UseDataSource, AllDataSourceTypes, ImmutableObject } from 'jimu-core'
+
 import { AllWidgetSettingProps } from 'jimu-for-builder'
 import { DataSourceSelector } from 'jimu-ui/advanced/data-source-selector'
 import FieldSelect from './fieldSelect'
+
 export default function Setting (props: AllWidgetSettingProps<{}>) {
   const onFieldChange = (allSelectedFields: string[], sourceId: string) => {
     props.onSettingChange({
       id: props.id,
       useDataSources: [...props.useDataSources].map(item => item.dataSourceId === sourceId ? { ...item, ...{ fields: allSelectedFields } } : item)
+    })
+  }
+  const onConfigChange = (sourceId: string, configProp: string, value: any) => {
+    const newProp = props.config[sourceId] || {}
+    newProp[configProp] = value
+
+    const newConfig = props.config
+    newConfig[sourceId] = newProp
+
+    props.onSettingChange({
+      id: props.id,
+      useDataSources: [...props.useDataSources], //updating this seems to trigger experience builder to register that a change was made. IDK but i dont like it much
+      config: newConfig
     })
   }
 
@@ -42,6 +57,8 @@ export default function Setting (props: AllWidgetSettingProps<{}>) {
         onChange={onFieldChange}
         selectedFields={selectedFields() || Immutable([])}
         widgetId={props.id}
+        configs={props.config}
+        configChange={onConfigChange}
       />
     }
   </div>
