@@ -70,7 +70,7 @@ export default function TabBody (props: Props) {
 
     const allRecords = ds.getRecords()
     const allData = allRecords.map(r => r.getData())
-    console.log(props.config.foreignKey)
+
     const data = allData.filter(res => res.globalid === props.globalId || res[props.config.foreignKey] === props.globalId)
 
     if (ds && props.config.foreignKey && props.config.header && props.config.subHeader) {

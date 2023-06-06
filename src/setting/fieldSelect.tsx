@@ -1,8 +1,5 @@
-import { React, DataSource, ImmutableArray, UseDataSource, ImmutableObject, DataSourceComponent, FeatureLayerQueryParams, IMDataSourceInfo, FieldSchema } from 'jimu-core'
+import { React, DataSource, ImmutableArray, UseDataSource, ImmutableObject, DataSourceComponent, FeatureLayerQueryParams, IMDataSourceInfo, FieldSchema, DataSourceManager } from 'jimu-core'
 
-import {
-  CalciteSelect, CalciteOption
-} from 'calcite-components'
 import { AdvancedSelect, AdvancedSelectItem } from 'jimu-ui'
 interface Props {
   useDataSource: ImmutableArray<UseDataSource>
@@ -12,11 +9,24 @@ interface Props {
   configs: any //TODO: what is the type of config?
   configChange: (sourceId: string, configProp: string, value: any) => void
 }
-
+ //TODO: lot of repetition in this file, need to see if i can minimize that
 export default function FieldSelect (props: Props) {
+  const fetchSourceNames = (): AdvancedSelectItem[] => {
+    const dsm = DataSourceManager.getInstance()
+    const dss = dsm.getDataSources()
+    const items = Object.keys(dss).filter(ds => dss[ds].order > -1).map(ds => {
+      const select = {} as AdvancedSelectItem
+      select.label = dss[ds].getLabel()
+      select.value = dss[ds].order
+      return select
+    }) as unknown as AdvancedSelectItem[]
+    console.log(items)
+    return items
+  }
+
   const idTypes = ['esriFieldTypeGlobalID', 'esriFieldTypeOID', 'esriFieldTypeGUID']
   const [source, setSource] = React.useState<number>(0)
-  const [sourceNames, setSourceNames] = React.useState<string[]>([])
+  const [sourceValues] = React.useState<AdvancedSelectItem[]>(fetchSourceNames())
   const [fieldSelectOpen, setFieldSelectOpen] = React.useState<boolean>(false)
   /**
    * These only exist becasue it allows me to update my selects. need a better solution
@@ -24,61 +34,26 @@ export default function FieldSelect (props: Props) {
   const [joinSelectOpen, setJoinSelectOpen] = React.useState<boolean>(false)
   const [headSelectOpen, setHeadSelectOpen] = React.useState<boolean>(false)
   const [subHeadSelectOpen, setSubHeadSelectOpen] = React.useState<boolean>(false)
-  const datasourceUpdate = (e: any) => {
-    const ds = props.useDataSource.filter(ds => ds.dataSourceId === e.target.value)[0] as unknown as UseDataSource //TODO: this fix is real iffy
-    const index = props.useDataSource.indexOf(ds)
-    setSource(index)
+  const [sourceSelectOpen, setSourceSelectOpen] = React.useState<boolean>(false)
+
+  const datasourceUpdate = (e: AdvancedSelectItem[]) => {
+    setSource(e[0].value as number)
   }
-  //TODO: swap data soure to advanced Select
-  const checkSourceSelect = (ds) => {
-    if (!sourceNames.includes(label)) {
-      const newNames = [...sourceNames]
-      newNames.push(label)
-      setSourceNames(newNames)
-    }
-  }
+
   const DataSourceSelect = () => {
-    const items = sourceNames.map(s => {
-      const select = {} as AdvancedSelectItem
-      select.label = s
-      select.value = s
-      return select
-    }) as unknown as AdvancedSelectItem[]
-
+    const sourceSelected = sourceValues.filter(s => s.value === source)
     return <>
-      <h3>Selected Data Source</h3>
-      <AdvancedSelect
-        fluid
-        strategy={'fixed'}
-        isMultiple
-        staticValues={items}
-        selectedValues={selectedValues}
-        onChange={selectChange}
-        isOpen={fieldSelectOpen}
-        toggle={(isOpen) => setFieldSelectOpen(isOpen)}
-      />
-      <CalciteSelect //TODO: need select that fits style and also works
-        id="datSourceSelect"
-        label="datSourceSelect"
-        onCalciteSelectChange={datasourceUpdate}>
-        {props.useDataSource.map(ds => {
-          console.log(ds)
-          return <DataSourceComponent useDataSource={ds} query={{ where: '1=1' } as FeatureLayerQueryParams} widgetId={props.widgetId}>
-            {DataSourceOptions}
-          </DataSourceComponent>
-        }
-        )}
-      </CalciteSelect>
-    </>
-  }
-
-  const DataSourceOptions = (ds: DataSource, info: IMDataSourceInfo) => {
-    if (info.status !== 'LOADED') {
-      return null
-    }
-    return <CalciteOption key={ds.id} value={ds.id} selected={ds.id === props.useDataSource[source].dataSourceId}>
-      {ds.getLabel()}
-    </CalciteOption>
+        <h3>Selected Data Source</h3>
+        <AdvancedSelect
+          fluid
+          strategy={'fixed'}
+          staticValues={sourceValues}
+          selectedValues={sourceSelected}
+          onChange={datasourceUpdate}
+          isOpen={sourceSelectOpen}
+          toggle={(isOpen) => setSourceSelectOpen(isOpen)}
+        />
+      </>
   }
 
   const Fields = () => {
@@ -98,7 +73,6 @@ export default function FieldSelect (props: Props) {
   }
 
   const selectChange = (event: AdvancedSelectItem[]) => {
-    console.log(event)
     const selected = event.map(item => item.value)
     props.onChange(selected, props.useDataSource[source].dataSourceId)
   }
@@ -132,12 +106,11 @@ export default function FieldSelect (props: Props) {
     }
     return null
   }
-
+ 
   const DataSourceFields = (ds: DataSource, info: IMDataSourceInfo) => {
     if (info.status !== 'LOADED') {
       return null
     }
-    checkSourceSelect(ds.getLabel())
 
     const fieldSchema = Object.values(ds.getSchema().fields)
     const previouslySelectedFields = props.useDataSource[source].fields
@@ -153,7 +126,6 @@ export default function FieldSelect (props: Props) {
     const foreignKeySelect = idValues.filter(v => v.value === foreignKey)
     const headerSelect = editableValues.filter(v => v.value === header)
     const subHeaderSelect = editableValues.filter(v => v.value === subHeader)
-    console.log(header, subHeader)
     return <>
       <h3>Editable Fields</h3>
       <AdvancedSelect
