@@ -1,6 +1,7 @@
 import { React, DataSource, ImmutableArray, UseDataSource, ImmutableObject, DataSourceComponent, FeatureLayerQueryParams, IMDataSourceInfo, FieldSchema, DataSourceManager } from 'jimu-core'
 
-import { AdvancedSelect, AdvancedSelectItem } from 'jimu-ui'
+import { AdvancedSelect, AdvancedSelectItem, Switch } from 'jimu-ui'
+import { ChangeEvent } from 'react'
 interface Props {
   useDataSource: ImmutableArray<UseDataSource>
   selectedFields: ImmutableArray<any> | ImmutableObject<any>
@@ -9,7 +10,7 @@ interface Props {
   configs: any //TODO: what is the type of config?
   configChange: (sourceId: string, configProp: string, value: any) => void
 }
- //TODO: lot of repetition in this file, need to see if i can minimize that
+//TODO: lot of repetition in this file, need to see if i can minimize that
 export default function FieldSelect (props: Props) {
   const fetchSourceNames = (): AdvancedSelectItem[] => {
     const dsm = DataSourceManager.getInstance()
@@ -43,17 +44,17 @@ export default function FieldSelect (props: Props) {
   const DataSourceSelect = () => {
     const sourceSelected = sourceValues.filter(s => s.value === source)
     return <>
-        <h3>Selected Data Source</h3>
-        <AdvancedSelect
-          fluid
-          strategy={'fixed'}
-          staticValues={sourceValues}
-          selectedValues={sourceSelected}
-          onChange={datasourceUpdate}
-          isOpen={sourceSelectOpen}
-          toggle={(isOpen) => setSourceSelectOpen(isOpen)}
-        />
-      </>
+      <h3>Selected Data Source</h3>
+      <AdvancedSelect
+        fluid
+        strategy={'fixed'}
+        staticValues={sourceValues}
+        selectedValues={sourceSelected}
+        onChange={datasourceUpdate}
+        isOpen={sourceSelectOpen}
+        toggle={(isOpen) => setSourceSelectOpen(isOpen)}
+      />
+    </>
   }
 
   const Fields = () => {
@@ -62,14 +63,18 @@ export default function FieldSelect (props: Props) {
     </DataSourceComponent>
   }
 
-  const joinChange = (event: any) => {
+  const joinChange = (event: AdvancedSelectItem[]) => {
     props.configChange(props.useDataSource[source].dataSourceId, 'foreignKey', event[0].value)
   }
-  const headChange = (event: any) => {
+  const headChange = (event: AdvancedSelectItem[]) => {
     props.configChange(props.useDataSource[source].dataSourceId, 'header', event[0].value)
   }
-  const subHeadChange = (event: any) => {
+  const subHeadChange = (event: AdvancedSelectItem[]) => {
     props.configChange(props.useDataSource[source].dataSourceId, 'subHeader', event[0].value)
+  }
+  const toggleChange = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    console.log(event, checked)
+    props.configChange(props.useDataSource[source].dataSourceId, 'newFeatures', checked)
   }
 
   const selectChange = (event: AdvancedSelectItem[]) => {
@@ -106,7 +111,14 @@ export default function FieldSelect (props: Props) {
     }
     return null
   }
- 
+
+  const fetchNewFeaturesToggle = (): boolean => {
+    if (Object.prototype.hasOwnProperty.call(props.configs, props.useDataSource[source].dataSourceId)) {
+      return !!props.configs[props.useDataSource[source].dataSourceId].newFeatures
+    }
+    return false
+  }
+
   const DataSourceFields = (ds: DataSource, info: IMDataSourceInfo) => {
     if (info.status !== 'LOADED') {
       return null
@@ -119,13 +131,10 @@ export default function FieldSelect (props: Props) {
     const idsSchema = fieldSchema.filter(s => idTypes.includes(s.esriType))
     const idValues = makeAdvancedSelectItems(idsSchema)
     const editableValues = makeAdvancedSelectItems(fieldSchema.filter(s => !idTypes.includes(s.esriType)))
-    const foreignKey = fetchForeignKey()
-    const header = fetchHeader()
-    const subHeader = fetchSubHeader()
 
-    const foreignKeySelect = idValues.filter(v => v.value === foreignKey)
-    const headerSelect = editableValues.filter(v => v.value === header)
-    const subHeaderSelect = editableValues.filter(v => v.value === subHeader)
+    const foreignKeySelect = idValues.filter(v => v.value === fetchForeignKey())
+    const headerSelect = editableValues.filter(v => v.value === fetchHeader())
+    const subHeaderSelect = editableValues.filter(v => v.value === fetchSubHeader())
     return <>
       <h3>Editable Fields</h3>
       <AdvancedSelect
@@ -168,6 +177,14 @@ export default function FieldSelect (props: Props) {
         isOpen={joinSelectOpen}
         toggle={(isOpen) => setJoinSelectOpen(isOpen)}
       />
+
+      <h3>Create New Features</h3>
+      <Switch
+        aria-label="Switch"
+        checked={fetchNewFeaturesToggle()}
+        onChange={toggleChange}
+      />
+
     </>
   }
 

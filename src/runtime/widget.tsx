@@ -10,7 +10,6 @@ import TabBody from './tabBody'
  * This widget will show features from a configured feature layer
  */
 export default function Widget (props: AllWidgetProps<{}>) {
-  console.log(props.config)
   const isDsConfigured = () => props.useDataSources && props.useDataSources.length > 0 && configPropsForAllLayers
   const [globalId, setGlobalId] = React.useState<string>(null)
 

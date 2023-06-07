@@ -3,19 +3,19 @@ import { React, ImmutableObject, FeatureDataRecord, FieldSchema, ImmutableArray 
 import {
   CalciteButton, CalciteInputText, CalciteLabel, CalciteInputDatePicker, CalciteInputNumber, CalciteInput
 } from 'calcite-components'
+
 interface Props {
   dataRecord: FeatureDataRecord
+  editType: string
   selectedFields: string[] | ImmutableArray<string>
   fieldSchema: ImmutableObject<{ [jimuName: string]: FieldSchema }>
-  updateRecord: (record: FeatureDataRecord, objectidField: string) => void
+  updateRecord: (record: FeatureDataRecord, editType: string) => void
   cancelUpdate: () => void
 }
 
-export default function RecordForm ({ cancelUpdate, dataRecord, selectedFields, fieldSchema, updateRecord }: Props) {
-  console.log(fieldSchema)
+export default function RecordForm ({ cancelUpdate, dataRecord, selectedFields, fieldSchema, updateRecord, editType }: Props) {
   const getValues = (dataRecord: FeatureDataRecord) => {
     const entries = Object.entries(dataRecord)
-
     const values = {}
     entries.forEach(v => {
       const type = fieldSchema[v[0]].esriType
@@ -33,8 +33,6 @@ export default function RecordForm ({ cancelUpdate, dataRecord, selectedFields, 
   const [formValues, setFormValues] = React.useState<Object>(getValues(dataRecord))
 
   const onSubmit = () => {
-    const objectid = Object.prototype.hasOwnProperty.call(dataRecord, 'OBJECTID') ? 'OBJECTID' : 'objectid'
-
     const record = { ...dataRecord }
     for (const key of selectedFields) {
       const type = fieldSchema[key].esriType
@@ -46,7 +44,7 @@ export default function RecordForm ({ cancelUpdate, dataRecord, selectedFields, 
         record[key] = formValues[key]
       }
     }
-    updateRecord(record, objectid)
+    updateRecord(record, editType)
   }
 
   const handleChange = (e: any): void => { //TODO: need to figure Calcite Event Type
