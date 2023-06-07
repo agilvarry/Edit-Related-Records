@@ -45,6 +45,7 @@ export default function TabBody (props: Props) {
   const canMakeNewFeatures = (): boolean => {
     return !!props.config.newFeatures
   }
+
   const applyEditsToTable = (edits: any): void => {
     ds.layer.applyEdits(edits).then(_res => {
       ds.setSourceRecords(ds.getRecords())
@@ -69,9 +70,6 @@ export default function TabBody (props: Props) {
     return attributes
   }
   const newItem = () => {
-    // const newGraphic = new Graphic({
-    //   attributes: fetchAttributes()
-    // })
     const newFeature = fetchAttributes()
     setEditType('create')
     setSelected(newFeature)
@@ -81,23 +79,23 @@ export default function TabBody (props: Props) {
     if (info.status !== 'LOADED') {
       return null
     }
-
+    setDS(ds)
     const selectedRecords = ds.getSelectedRecords().map(r => r.getData())
     if (selectedRecords[0] && selectedRecords[0].globalid !== props.globalId) {
       props.setGlobalId(selectedRecords[0].globalid)
       return null
     }
-    setDS(ds)
 
     const allRecords = ds.getRecords()
     const allData = allRecords.map(r => r.getData())
 
     const data = allData.filter(res => res.globalid === props.globalId || res[props.config.foreignKey] === props.globalId)
-    console.log(canMakeNewFeatures())
+
     if (ds && props.config.foreignKey && props.config.header && props.config.subHeader) {
       return <CalcitePanel>
         {selected
           ? <RecordForm
+            sourceFields={ds.layer.fields}
             fieldSchema={ds.getFetchedSchema().fields}
             dataRecord={selected}
             selectedFields={props.dataSource.fields}

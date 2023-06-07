@@ -1,4 +1,5 @@
-import { React, DataSource, ImmutableArray, UseDataSource, ImmutableObject, DataSourceComponent, FeatureLayerQueryParams, IMDataSourceInfo, FieldSchema, DataSourceManager } from 'jimu-core'
+import Field from 'esri/layers/support/Field'
+import { React, ImmutableArray, UseDataSource, ImmutableObject, DataSourceComponent, FeatureLayerQueryParams, IMDataSourceInfo, DataSourceManager, FeatureLayerDataSource } from 'jimu-core'
 
 import { AdvancedSelect, AdvancedSelectItem, Switch } from 'jimu-ui'
 import { ChangeEvent } from 'react'
@@ -25,7 +26,7 @@ export default function FieldSelect (props: Props) {
     return items
   }
 
-  const idTypes = ['esriFieldTypeGlobalID', 'esriFieldTypeOID', 'esriFieldTypeGUID']
+  const idTypes = ['oid', 'global-id', 'guid']
   const [source, setSource] = React.useState<number>(0)
   const [sourceValues] = React.useState<AdvancedSelectItem[]>(fetchSourceNames())
   const [fieldSelectOpen, setFieldSelectOpen] = React.useState<boolean>(false)
@@ -82,11 +83,11 @@ export default function FieldSelect (props: Props) {
     props.onChange(selected, props.useDataSource[source].dataSourceId)
   }
 
-  const makeAdvancedSelectItems = (schema: Array<ImmutableObject<FieldSchema>>) => {
+  const makeAdvancedSelectItems = (schema: Field[]) => {
     return schema.map(s => {
       const select = {} as AdvancedSelectItem
       select.label = s.alias
-      select.value = s.jimuName
+      select.value = s.name
       return select
     }) as unknown as AdvancedSelectItem[]
   }
@@ -119,19 +120,20 @@ export default function FieldSelect (props: Props) {
     return false
   }
 
-  const DataSourceFields = (ds: DataSource, info: IMDataSourceInfo) => {
+  const DataSourceFields = (ds: FeatureLayerDataSource, info: IMDataSourceInfo) => {
     if (info.status !== 'LOADED') {
       return null
     }
-
-    const fieldSchema = Object.values(ds.getSchema().fields)
+    console.log(ds.getGeometryType())
+    const fieldSchema = ds.layer.fields
     const previouslySelectedFields = props.useDataSource[source].fields
-    const selectedSchema = previouslySelectedFields ? fieldSchema.filter(s => previouslySelectedFields.includes(s.jimuName)) : []
+    const selectedSchema = previouslySelectedFields ? fieldSchema.filter(s => previouslySelectedFields.includes(s.name)) : []
     const selectedValues = makeAdvancedSelectItems(selectedSchema)
-    const idsSchema = fieldSchema.filter(s => idTypes.includes(s.esriType))
+    const idsSchema = fieldSchema.filter(s => idTypes.includes(s.type))
     const idValues = makeAdvancedSelectItems(idsSchema)
-    const editableValues = makeAdvancedSelectItems(fieldSchema.filter(s => !idTypes.includes(s.esriType)))
-
+    const editableValues = makeAdvancedSelectItems(fieldSchema.filter(s => s.editable))
+    //header values are anything that isn't an id type
+    const headerValues = makeAdvancedSelectItems(fieldSchema.filter(s => !idTypes.includes(s.type)))
     const foreignKeySelect = idValues.filter(v => v.value === fetchForeignKey())
     const headerSelect = editableValues.filter(v => v.value === fetchHeader())
     const subHeaderSelect = editableValues.filter(v => v.value === fetchSubHeader())
@@ -147,26 +149,29 @@ export default function FieldSelect (props: Props) {
         isOpen={fieldSelectOpen}
         toggle={(isOpen) => setFieldSelectOpen(isOpen)}
       />
+
       <h3>List Header</h3>
       <AdvancedSelect
         fluid
         strategy={'fixed'}
-        staticValues={editableValues}
+        staticValues={headerValues}
         selectedValues={headerSelect}
         onChange={headChange}
         isOpen={headSelectOpen}
         toggle={(isOpen) => setHeadSelectOpen(isOpen)}
       />
+
       <h3>List SubHeader</h3>
       <AdvancedSelect
         fluid
         strategy={'fixed'}
-        staticValues={editableValues}
+        staticValues={headerValues}
         selectedValues={subHeaderSelect}
         onChange={subHeadChange}
         isOpen={subHeadSelectOpen}
         toggle={(isOpen) => setSubHeadSelectOpen(isOpen)}
       />
+
       <h3>Join Field</h3>
       <AdvancedSelect
         fluid
@@ -177,13 +182,13 @@ export default function FieldSelect (props: Props) {
         isOpen={joinSelectOpen}
         toggle={(isOpen) => setJoinSelectOpen(isOpen)}
       />
-
-      <h3>Create New Features</h3>
+      {!ds.getGeometryType() &&
+      <><h3>Create New Features</h3>
       <Switch
         aria-label="Switch"
         checked={fetchNewFeaturesToggle()}
         onChange={toggleChange}
-      />
+      /></>}
 
     </>
   }

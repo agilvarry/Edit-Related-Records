@@ -1,10 +1,11 @@
 import { React, ImmutableObject, FeatureDataRecord, FieldSchema, ImmutableArray } from 'jimu-core'
-
 import {
   CalciteButton, CalciteInputText, CalciteLabel, CalciteInputDatePicker, CalciteInputNumber, CalciteInput
 } from 'calcite-components'
+import Field from 'esri/layers/support/Field'
 
 interface Props {
+  sourceFields: Field[]
   dataRecord: FeatureDataRecord
   editType: string
   selectedFields: string[] | ImmutableArray<string>
@@ -13,7 +14,7 @@ interface Props {
   cancelUpdate: () => void
 }
 
-export default function RecordForm ({ cancelUpdate, dataRecord, selectedFields, fieldSchema, updateRecord, editType }: Props) {
+export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, selectedFields, fieldSchema, updateRecord, editType }: Props) {
   const getValues = (dataRecord: FeatureDataRecord) => {
     const entries = Object.entries(dataRecord)
     const values = {}
@@ -30,8 +31,12 @@ export default function RecordForm ({ cancelUpdate, dataRecord, selectedFields, 
     return values
   }
 
-  const [formValues, setFormValues] = React.useState<Object>(getValues(dataRecord))
+  const getLongFields = () => {
+    return sourceFields.filter(f => f.length > 500).map(f => f.name)
+  }
 
+  const [formValues, setFormValues] = React.useState<Object>(getValues(dataRecord))
+  const longFields = getLongFields()
   const onSubmit = () => {
     const record = { ...dataRecord }
     for (const key of selectedFields) {
@@ -60,7 +65,11 @@ export default function RecordForm ({ cancelUpdate, dataRecord, selectedFields, 
         const alias = fieldSchema[f].alias
         let val: JSX.Element
         if (type === 'esriFieldTypeString') {
-          val = <CalciteInputText id={f} onCalciteInputTextInput={handleChange} value={formValues[f]}></CalciteInputText>
+          if (longFields.includes(f)) {
+            val = <textarea id={f} onChange={handleChange} value={formValues[f]}> </textarea>
+          } else {
+            val = <CalciteInputText id={f} onCalciteInputTextInput={handleChange} value={formValues[f]}></CalciteInputText>
+          }
         } else if (type === 'esriFieldTypeDate') {
           val = <CalciteInputDatePicker id={f} onCalciteInputDatePickerChange={handleChange} value={formValues[f]}></CalciteInputDatePicker>
         } else if (type === 'esriFieldTypeInteger') {
