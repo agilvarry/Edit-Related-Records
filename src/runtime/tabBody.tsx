@@ -25,7 +25,6 @@ export default function TabBody (props: Props) {
   const query: FeatureLayerQueryParams = { where: '1=1', pageSize: 1000 } //TODO: setting this to 1000 fixed my perplexing issue but it makes things load slower, also think it won't work once we go over 1000 records.
   const [selected, setSelected] = React.useState<FeatureDataRecord>(null)
   const [editType, setEditType] = React.useState<string>(null)
-  const flowID = `${props.dataSource.dataSourceId}_flow`
 
   const updateRecord = (record: FeatureDataRecord, editType: string): void => {
     const updates = new Graphic({
@@ -90,9 +89,8 @@ export default function TabBody (props: Props) {
     const allData = allRecords.map(r => r.getData())
 
     const data = allData.filter(res => res.globalid === props.globalId || res[props.config.foreignKey] === props.globalId)
-
     if (ds && props.config.foreignKey && props.config.header && props.config.subHeader) {
-      return <CalcitePanel>
+      return <div>
         {selected
           ? <RecordForm
             sourceFields={ds.layer.fields}
@@ -103,18 +101,17 @@ export default function TabBody (props: Props) {
             cancelUpdate={removeSelected}
             editType={editType}
           />
-          : <div className="tab-content" style={{ overflow: 'auto' }}>
-            <CalciteList>
+          : <CalciteList>
               {canMakeNewFeatures() && <CalciteListItem label="Create New Feature" onCalciteListItemSelect={() => newItem()} ></CalciteListItem>}
-              {data.length > 1
+              {data.length > 0
                 ? data.map(d => {
                   console.log(d)
                   return <CalciteListItem label={d[props.config.header]} description={d[props.config.subHeader]} onCalciteListItemSelect={() => itemSelected(d)} ></CalciteListItem>
                 })
                 : <CalciteListItem label="No Available Records"></CalciteListItem>}
             </CalciteList>
-          </div >}
-      </CalcitePanel>
+          }
+      </div>
     } else {
       //TODO: IDK if this is ever returned
       return <h3>
@@ -123,14 +120,7 @@ export default function TabBody (props: Props) {
     }
   }
 
-  return (<div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
-    <CalciteFlow id={flowID}>
-      <CalciteFlowItem>
-        <DataSourceComponent useDataSource={props.dataSource} query={query} widgetId={props.widgetId} queryCount>
+  return <DataSourceComponent useDataSource={props.dataSource} query={query} widgetId={props.widgetId} queryCount>
           {tabRender}
         </DataSourceComponent>
-      </CalciteFlowItem>
-    </CalciteFlow>
-
-  </div>)
 }
