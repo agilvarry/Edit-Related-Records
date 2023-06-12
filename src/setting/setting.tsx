@@ -33,7 +33,7 @@ export default function Setting (props: AllWidgetSettingProps<{}>) {
     return newFields
   }
 
-  const onDataSourceChange = (useDataSources: UseDataSource[]) => {
+  const onDataSourceChange = (useDataSources: UseDataSource[]): void => {
     props.onSettingChange({
       id: props.id,
       useDataSources: useDataSources

@@ -5,12 +5,11 @@ import {
   React, DataSource, AllWidgetProps, DataSourceComponent, FeatureLayerQueryParams
 } from 'jimu-core'
 import TabBody from './tabBody'
-import backgroundColorBackground from 'esri/webscene/background/ColorBackground'
 
 /**
  * This widget will show features from a configured feature layer
  */
-export default function Widget(props: AllWidgetProps<{}>) {
+export default function Widget (props: AllWidgetProps<{}>) {
   const isDsConfigured = () => props.useDataSources && props.useDataSources.length > 0 && configPropsForAllLayers
   const [globalId, setGlobalId] = React.useState<string>(null)
 
@@ -31,7 +30,7 @@ export default function Widget(props: AllWidgetProps<{}>) {
       Configure the data source.
     </h3>
   } else {
-    return <div className="widget-content" style={{ width: '100%', height: '100%', backgroundColor: '#ffffff'}}>
+    return <div className="widget-content" style={{ width: '100%', height: '100%', backgroundColor: '#ffffff' }}>
         <CalciteTabs className="jimu-widget surface-1">
           <CalciteTabNav className="" slot="title-group" >
             {props.useDataSources.map(ds => (

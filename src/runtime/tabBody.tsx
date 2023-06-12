@@ -1,7 +1,7 @@
 import { React, UseDataSource, ImmutableObject, DataSourceComponent, FeatureLayerQueryParams, FeatureLayerDataSource, FeatureDataRecord, IMDataSourceInfo } from 'jimu-core'
 import RecordForm from './recordForm'
 import {
-  CalciteFlow, CalciteFlowItem, CalciteList, CalciteListItem, CalcitePanel
+  CalciteList, CalciteListItem
 } from 'calcite-components'
 
 import Graphic from 'esri/Graphic'
@@ -68,6 +68,7 @@ export default function TabBody (props: Props) {
 
     return attributes
   }
+
   const newItem = () => {
     const newFeature = fetchAttributes()
     setEditType('create')
@@ -88,13 +89,14 @@ export default function TabBody (props: Props) {
     const allRecords = ds.getRecords()
     const allData = allRecords.map(r => r.getData())
 
-    const data = allData.filter(res => res.globalid === props.globalId || res[props.config.foreignKey] === props.globalId)
-    if (ds && props.config.foreignKey && props.config.header && props.config.subHeader) {
+    if (ds && props.config && props.config.foreignKey && props.config.header && props.dataSource.fields) {
+      const data = allData.filter(res => res.globalid === props.globalId || res[props.config.foreignKey] === props.globalId)
+      const schema = ds.getFetchedSchema().fields
       return <div>
         {selected
           ? <RecordForm
             sourceFields={ds.layer.fields}
-            fieldSchema={ds.getFetchedSchema().fields}
+            fieldSchema={schema}
             dataRecord={selected}
             selectedFields={props.dataSource.fields}
             updateRecord={updateRecord}
@@ -102,15 +104,16 @@ export default function TabBody (props: Props) {
             editType={editType}
           />
           : <CalciteList>
-              {canMakeNewFeatures() && <CalciteListItem label="Create New Feature" onCalciteListItemSelect={() => newItem()} ></CalciteListItem>}
-              {data.length > 0
-                ? data.map(d => {
-                  console.log(d)
-                  return <CalciteListItem label={d[props.config.header]} description={d[props.config.subHeader]} onCalciteListItemSelect={() => itemSelected(d)} ></CalciteListItem>
-                })
-                : <CalciteListItem label="No Available Records"></CalciteListItem>}
-            </CalciteList>
-          }
+            {canMakeNewFeatures() && <CalciteListItem label="Create New Record" onCalciteListItemSelect={() => newItem()} ></CalciteListItem>}
+            {data.length > 0
+              ? data.map(d => {
+                const header = schema[props.config.header].esriType === 'esriFieldTypeDate' && d[props.config.header] ? new Date(d[props.config.header]).toLocaleDateString() : d[props.config.header]
+                const subheader = props.config.subHeader ? schema[props.config.header].esriType === 'esriFieldTypeDate' && d[props.config.header] ? new Date(d[props.config.header]).toLocaleDateString() : d[props.config.header] : null
+                return <CalciteListItem label={header} description={subheader} onCalciteListItemSelect={() => itemSelected(d)} ></CalciteListItem>
+              })
+              : <CalciteListItem label="No Available Records"></CalciteListItem>}
+          </CalciteList>
+        }
       </div>
     } else {
       //TODO: IDK if this is ever returned
@@ -121,6 +124,6 @@ export default function TabBody (props: Props) {
   }
 
   return <DataSourceComponent useDataSource={props.dataSource} query={query} widgetId={props.widgetId} queryCount>
-          {tabRender}
-        </DataSourceComponent>
+    {tabRender}
+  </DataSourceComponent>
 }

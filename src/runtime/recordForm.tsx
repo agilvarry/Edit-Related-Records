@@ -15,15 +15,22 @@ interface Props {
 }
 
 export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, selectedFields, fieldSchema, updateRecord, editType }: Props) {
+  console.log(sourceFields)
+  const editable = sourceFields.map(f => f.editable && f.name).filter(f => f)
+  console.log(editable)
   const getValues = (dataRecord: FeatureDataRecord) => {
     const entries = Object.entries(dataRecord)
     const values = {}
     entries.forEach(v => {
       const type = fieldSchema[v[0]].esriType
       if (type === 'esriFieldTypeDate') {
-        const date = new Date(v[1])
-        const iso = date.toISOString() //TODO: we need iso string for stuff, update in handle change and getValues
-        values[v[0]] = iso.split('T')[0]
+        if (v[1]) {
+          const date = new Date(v[1])
+          const iso = date.toISOString()
+          values[v[0]] = iso.split('T')[0]
+        } else {
+          values[v[0]] = null //if v[1] is 0 or null set value to null so we default to current date in datepicker
+        }
       } else {
         values[v[0]] = v[1]
       }
@@ -43,7 +50,6 @@ export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, se
       const type = fieldSchema[key].esriType
       if (type === 'esriFieldTypeDate') {
         const date = Date.parse(formValues[key])
-        console.log(date)
         record[key] = date
       } else {
         record[key] = formValues[key]
@@ -64,7 +70,9 @@ export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, se
         const type = fieldSchema[f].esriType
         const alias = fieldSchema[f].alias
         let val: JSX.Element
-        if (type === 'esriFieldTypeString') {
+        if (!editable.includes(f)) {
+          val = <CalciteInput id={f} read-only value={formValues[f]}></CalciteInput>
+        } else if (type === 'esriFieldTypeString') {
           if (longFields.includes(f)) {
             val = <textarea id={f} onChange={handleChange} value={formValues[f]}> </textarea>
           } else {
@@ -75,7 +83,7 @@ export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, se
         } else if (type === 'esriFieldTypeInteger') {
           val = <CalciteInputNumber id={f} onCalciteInputNumberInput={handleChange} value={formValues[f]}></CalciteInputNumber>
         } else {
-          val = <CalciteInput id={f} read-only>{f} {type} {dataRecord[f]}</CalciteInput>
+          val = <CalciteInput onCalciteInputChange={handleChange} value={formValues[f]} id={f}></CalciteInput>
         }
         return <CalciteLabel>
           {alias}
