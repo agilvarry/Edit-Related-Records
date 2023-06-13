@@ -13,13 +13,20 @@ export default function Widget (props: AllWidgetProps<{}>) {
   const isDsConfigured = () => props.useDataSources && props.useDataSources.length > 0 && configPropsForAllLayers
   const [globalId, setGlobalId] = React.useState<string>(null)
 
+  const fetchConfigProp = (prop: string, id: string) => {
+    if (Object.prototype.hasOwnProperty.call(props.config, id)) {
+      return props.config[id][prop]
+    }
+    return null
+  }
   const configPropsForAllLayers = (): boolean => {
     const ids = props.useDataSources.map(ds => ds.dataSourceId)
     return ids.every(id => Object.prototype.hasOwnProperty.call(props.config, id))
   }
   const headerRender = (ds: DataSource) => {
+    const label = fetchConfigProp('label', ds.id)
     return <CalciteTabTitle className=" tab-title">
-      {ds.getLabel()}
+      {label || ds.getLabel()}
     </CalciteTabTitle>
   }
 

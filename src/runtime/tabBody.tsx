@@ -22,7 +22,7 @@ interface Props {
 
 export default function TabBody (props: Props) {
   const [ds, setDS] = React.useState<FeatureLayerDataSource>(null)
-  const query: FeatureLayerQueryParams = { where: '1=1', pageSize: 1000 } //TODO: setting this to 1000 fixed my perplexing issue but it makes things load slower, also think it won't work once we go over 1000 records.
+  const query: FeatureLayerQueryParams = { where: '1=1', pageSize: 1000 }
   const [selected, setSelected] = React.useState<FeatureDataRecord>(null)
   const [editType, setEditType] = React.useState<string>(null)
 
@@ -108,7 +108,7 @@ export default function TabBody (props: Props) {
             {data.length > 0
               ? data.map(d => {
                 const header = schema[props.config.header].esriType === 'esriFieldTypeDate' && d[props.config.header] ? new Date(d[props.config.header]).toLocaleDateString() : d[props.config.header]
-                const subheader = props.config.subHeader ? schema[props.config.header].esriType === 'esriFieldTypeDate' && d[props.config.header] ? new Date(d[props.config.header]).toLocaleDateString() : d[props.config.header] : null
+                const subheader = props.config.subHeader ? schema[props.config.subHeader].esriType === 'esriFieldTypeDate' && d[props.config.subHeader] ? new Date(d[props.config.subHeader]).toLocaleDateString() : d[props.config.subHeader] : null //TODO: Can evaluate to 0 currently
                 return <CalciteListItem label={header} description={subheader} onCalciteListItemSelect={() => itemSelected(d)} ></CalciteListItem>
               })
               : <CalciteListItem label="No Available Records"></CalciteListItem>}

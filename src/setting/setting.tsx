@@ -2,7 +2,8 @@ import { React, Immutable, UseDataSource, AllDataSourceTypes, ImmutableObject } 
 
 import { AllWidgetSettingProps } from 'jimu-for-builder'
 import { DataSourceSelector } from 'jimu-ui/advanced/data-source-selector'
-import FieldSelect from './fieldSelect'
+import DataSourceSettings from './dataSourceSettings'
+import { SettingSection, SettingRow } from 'jimu-ui/advanced/setting-components'
 
 export default function Setting (props: AllWidgetSettingProps<{}>) {
   const onFieldChange = (allSelectedFields: string[], sourceId: string) => {
@@ -17,7 +18,7 @@ export default function Setting (props: AllWidgetSettingProps<{}>) {
 
     const newConfig = props.config
     newConfig[sourceId] = newProp
-
+    console.log(newConfig)
     props.onSettingChange({
       id: props.id,
       useDataSources: [...props.useDataSources], //updating this seems to trigger experience builder to register that a change was made. IDK but i dont like it much
@@ -41,20 +42,24 @@ export default function Setting (props: AllWidgetSettingProps<{}>) {
   }
 
   return <div className="use-feature-layer-setting p-2">
-    <DataSourceSelector
-      types={Immutable([AllDataSourceTypes.FeatureLayer])}
-      useDataSources={props.useDataSources}
-      useDataSourcesEnabled={true}
-      mustUseDataSource={true}
-      onChange={onDataSourceChange}
-      widgetId={props.id}
-      isMultiple={true}
-    />
+    <SettingSection title="Data">
+      <SettingRow>
+        <DataSourceSelector
+          types={Immutable([AllDataSourceTypes.FeatureLayer])}
+          useDataSources={props.useDataSources}
+          useDataSourcesEnabled={true}
+          mustUseDataSource={true}
+          onChange={onDataSourceChange}
+          widgetId={props.id}
+          isMultiple={true}
+        />
+      </SettingRow>
+    </SettingSection>
     {
       props.useDataSources && props.useDataSources.length > 0 && //TODO: check loaded status
-      <FieldSelect
+      <DataSourceSettings
         useDataSource={props.useDataSources}
-        onChange={onFieldChange}
+        onFieldChange={onFieldChange}
         selectedFields={selectedFields() || Immutable([])}
         widgetId={props.id}
         configs={props.config}
