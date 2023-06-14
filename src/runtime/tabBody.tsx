@@ -75,6 +75,16 @@ export default function TabBody (props: Props) {
     setSelected(newFeature)
   }
 
+  const formatIfDate = (esriType: string, attribute: any): string => {
+    console.log(esriType)
+    const res = esriType === 'esriFieldTypeDate' && attribute ? new Date(attribute).toLocaleDateString() : attribute
+    if (res === 0) {
+      return null
+    }
+    console.log(res)
+    return res
+  }
+
   const tabRender = (ds: FeatureLayerDataSource, info: IMDataSourceInfo) => {
     if (info.status !== 'LOADED') {
       return null
@@ -107,8 +117,8 @@ export default function TabBody (props: Props) {
             {canMakeNewFeatures() && <CalciteListItem label="Create New Record" onCalciteListItemSelect={() => newItem()} ></CalciteListItem>}
             {data.length > 0
               ? data.map(d => {
-                const header = schema[props.config.header].esriType === 'esriFieldTypeDate' && d[props.config.header] ? new Date(d[props.config.header]).toLocaleDateString() : d[props.config.header]
-                const subheader = props.config.subHeader ? schema[props.config.subHeader].esriType === 'esriFieldTypeDate' && d[props.config.subHeader] ? new Date(d[props.config.subHeader]).toLocaleDateString() : d[props.config.subHeader] : null //TODO: Can evaluate to 0 currently
+                const header = formatIfDate(schema[props.config.header].esriType, d[props.config.header])
+                const subheader = props.config.subHeader ? formatIfDate(schema[props.config.subHeader].esriType, d[props.config.subHeader]) : null //TODO: Can evaluate to 0 currently
                 return <CalciteListItem label={header} description={subheader} onCalciteListItemSelect={() => itemSelected(d)} ></CalciteListItem>
               })
               : <CalciteListItem label="No Available Records"></CalciteListItem>}
