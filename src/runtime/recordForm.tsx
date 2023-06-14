@@ -41,7 +41,9 @@ export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, se
   }
 
   const [formValues, setFormValues] = React.useState<Object>(getValues(dataRecord))
+
   const longFields = getLongFields()
+
   const onSubmit = () => {
     const record = { ...dataRecord }
     for (const key of selectedFields) {

@@ -14,8 +14,10 @@ interface Props {
   geometryType: GeometryType
   fieldSchema: Field[]
   selectedSchema: Field[]
+  parentSource: () => string
+  parentDisplay: () => boolean
 }
-export default function DataSourceFields ({ source, geometryType, fieldSchema, selectedSchema, fetchConfigProp, configs, configChange, onFieldChange }: Props) {
+export default function DataSourceFields ({ parentSource, parentDisplay, source, geometryType, fieldSchema, selectedSchema, fetchConfigProp, configs, configChange, onFieldChange }: Props) {
   const idTypes = ['oid', 'global-id', 'guid']
   const [fieldSelectOpen, setFieldSelectOpen] = React.useState<boolean>(false)
   /**
@@ -40,6 +42,7 @@ export default function DataSourceFields ({ source, geometryType, fieldSchema, s
   const [joinSelectOpen, setJoinSelectOpen] = React.useState<boolean>(false)
   const [headSelectOpen, setHeadSelectOpen] = React.useState<boolean>(false)
   const [subHeadSelectOpen, setSubHeadSelectOpen] = React.useState<boolean>(false)
+
   const fetchNewFeaturesToggle = (): boolean => {
     if (Object.prototype.hasOwnProperty.call(configs, source)) {
       return !!configs[source].newFeatures
@@ -68,8 +71,8 @@ export default function DataSourceFields ({ source, geometryType, fieldSchema, s
     const selected = event.map(item => item.value)
     onFieldChange(selected, source)
   }
-
-  return <>
+  if (parentSource() !== source || (parentSource() === source && parentDisplay())) {
+    return <>
       <SettingSection title="Editable Fields">
         <SettingRow>
           <AdvancedSelect
@@ -139,4 +142,7 @@ export default function DataSourceFields ({ source, geometryType, fieldSchema, s
           </div>
         </SettingSection>}
     </>
+  } else {
+    return null
+  }
 }

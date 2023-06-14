@@ -25,6 +25,16 @@ export default function Setting (props: AllWidgetSettingProps<{}>) {
     })
   }
 
+  const configRootParam = (param: string, value: (string | boolean)) => {
+    const newConfig = props.config
+    newConfig[param] = value
+    props.onSettingChange({
+      id: props.id,
+      useDataSources: [...props.useDataSources], //updating this seems to trigger experience builder to register that a change was made. IDK but i dont like it much
+      config: newConfig
+    })
+  }
+
   const selectedFields = () => {
     let newFields = Immutable({}) as ImmutableObject<{ [dataSourceId: string]: string[] }>
     props.useDataSources.forEach(ds => {
@@ -63,6 +73,7 @@ export default function Setting (props: AllWidgetSettingProps<{}>) {
         widgetId={props.id}
         configs={props.config}
         configChange={onConfigChange}
+        configRootParam={configRootParam}
       />
     }
   </div>

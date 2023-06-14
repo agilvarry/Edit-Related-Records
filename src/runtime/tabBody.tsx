@@ -10,12 +10,14 @@ interface configProps {
   header: string
   subHeader: string
   newFeatures: boolean
+  parentDataSource: string
+  displayParent: boolean
 }
 
 interface Props {
   dataSource: ImmutableObject<UseDataSource>
-  globalId: string
-  setGlobalId: (globalId: string) => void
+  globalId: string[]
+  setGlobalId: (globalId: string[]) => void
   widgetId: string
   config: configProps
 }
@@ -57,6 +59,7 @@ export default function TabBody (props: Props) {
     setEditType('update')
     setSelected(data)
   }
+
   const removeSelected = () => {
     setSelected(null)
   }
@@ -88,16 +91,16 @@ export default function TabBody (props: Props) {
       return null
     }
     setDS(ds)
+    // const props.parentDataSource ===  selectedIds = ds.getSelectedRecordIds()
     const selectedRecords = ds.getSelectedRecords().map(r => r.getData())
     if (selectedRecords[0] && selectedRecords[0].globalid !== props.globalId) {
       props.setGlobalId(selectedRecords[0].globalid)
       return null
     }
 
-    const allRecords = ds.getRecords()
-    const allData = allRecords.map(r => r.getData())
-
     if (ds && props.config && props.config.foreignKey && props.config.header && props.dataSource.fields) {
+      const allRecords = ds.getRecords()
+      const allData = allRecords.map(r => r.getData())
       const data = allData.filter(res => res.globalid === props.globalId || res[props.config.foreignKey] === props.globalId)
       const schema = ds.getFetchedSchema().fields
       return <div>
