@@ -15,9 +15,7 @@ interface Props {
 }
 
 export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, selectedFields, fieldSchema, updateRecord, editType }: Props) {
-  console.log(sourceFields)
   const editable = sourceFields.map(f => f.editable && f.name).filter(f => f)
-  console.log(editable)
   const getValues = (dataRecord: FeatureDataRecord) => {
     const entries = Object.entries(dataRecord)
     const values = {}

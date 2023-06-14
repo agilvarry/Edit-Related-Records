@@ -18,7 +18,6 @@ export default function Setting (props: AllWidgetSettingProps<{}>) {
 
     const newConfig = props.config
     newConfig[sourceId] = newProp
-    console.log(newConfig)
     props.onSettingChange({
       id: props.id,
       useDataSources: [...props.useDataSources], //updating this seems to trigger experience builder to register that a change was made. IDK but i dont like it much

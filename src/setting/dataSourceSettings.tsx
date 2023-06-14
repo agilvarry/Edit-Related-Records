@@ -53,7 +53,6 @@ export default function DataSourceSettings (props: Props) {
     ids.forEach(id => {
       labels[id] = fetchConfigProp('label', id)
     })
-    console.log(labels)
     return labels
   }
 
@@ -78,9 +77,7 @@ export default function DataSourceSettings (props: Props) {
   const labelChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newLabels = { ...labels }
     newLabels[source] = event.target.value
-    console.log(newLabels)
     setLabels(newLabels)
-    console.log(labels)
   }
 
   const DataSourceFields = (ds: FeatureLayerDataSource, info: IMDataSourceInfo) => {

@@ -76,12 +76,10 @@ export default function TabBody (props: Props) {
   }
 
   const formatIfDate = (esriType: string, attribute: any): string => {
-    console.log(esriType)
     const res = esriType === 'esriFieldTypeDate' && attribute ? new Date(attribute).toLocaleDateString() : attribute
     if (res === 0) {
       return null
     }
-    console.log(res)
     return res
   }
 
