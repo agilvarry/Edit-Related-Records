@@ -17,7 +17,10 @@ interface Props {
 
 export default function TabBody (props: Props) {
   const [ds, setDS] = React.useState<FeatureLayerDataSource>(null)
-  const query: FeatureLayerQueryParams = { where: '1=1', pageSize: 1000 }
+  // const where = `${props.config.foreignKey} like '${props.globalId}'` //IDK why this is failing but i think it would make things a lot better if i can just query by globalid
+  // console.log(where)
+  const testWhere = "Comments = 'kittyies'"
+  const query: FeatureLayerQueryParams = { where: testWhere, pageSize: 1000 }
   const [selected, setSelected] = React.useState<FeatureDataRecord>(null)
   const [editType, setEditType] = React.useState<string>(null)
   const updateRecord = (record: FeatureDataRecord, editType: string): void => {
@@ -73,7 +76,7 @@ export default function TabBody (props: Props) {
   const formatIfDate = (esriType: string, attribute: any): string => {
     const res = esriType === 'esriFieldTypeDate' && attribute ? new Date(attribute).toLocaleDateString() : attribute
     if (res === 0) {
-      return 'No Date git '
+      return 'No Date Set'
     }
     return res
   }
@@ -86,7 +89,7 @@ export default function TabBody (props: Props) {
 
     const allRecords = ds.getRecords()
     const allData = allRecords.map(r => r.getData())
-    const data = allData.filter(res => res.globalid === props.globalId || res[props.config.foreignKey] === props.globalId)
+    const data = allData.filter(res => res[props.config.foreignKey] === props.globalId)
     const schema = ds.getFetchedSchema().fields
     return <div>
         {selected
@@ -116,7 +119,7 @@ export default function TabBody (props: Props) {
     return <p>
      No Record Selected {/* TODO: Style this better somehow */}
   </p>
-  } else if (props.config && props.config.header && props.dataSource.fields && (props.config.foreignKey || props.isParent)) {
+  } else if (props.config && props.config.header && props.dataSource.fields && props.config.foreignKey) {
     return <DataSourceComponent useDataSource={props.dataSource} query={query} widgetId={props.widgetId} queryCount>
     {tabRender}
   </DataSourceComponent>

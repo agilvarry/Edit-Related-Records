@@ -73,6 +73,19 @@ export default function DataSourceFields ({ parentSource, parentDisplay, source,
   }
   if (parentSource() !== source || (parentSource() === source && parentDisplay())) {
     return <>
+    <SettingSection title="Join field">
+        <SettingRow>
+          <AdvancedSelect
+            fluid
+            strategy={'fixed'}
+            selectedValues={foreignKeySelect}
+            staticValues={idValues}
+            onChange={joinChange}
+            isOpen={joinSelectOpen}
+            toggle={(isOpen) => setJoinSelectOpen(isOpen)}
+          />
+        </SettingRow>
+      </SettingSection>
       <SettingSection title="Select Fields">
         <SettingRow>
           <AdvancedSelect
@@ -112,19 +125,6 @@ export default function DataSourceFields ({ parentSource, parentDisplay, source,
           />
         </SettingRow>
       </SettingSection>
-     {parentSource() !== source && <SettingSection title="Join field">
-        <SettingRow>
-          <AdvancedSelect
-            fluid
-            strategy={'fixed'}
-            selectedValues={foreignKeySelect}
-            staticValues={idValues}
-            onChange={joinChange}
-            isOpen={joinSelectOpen}
-            toggle={(isOpen) => setJoinSelectOpen(isOpen)}
-          />
-        </SettingRow>
-      </SettingSection>}
       {!geometryType &&
         <SettingSection>
           <div className='w-100 table-options' >
@@ -143,6 +143,18 @@ export default function DataSourceFields ({ parentSource, parentDisplay, source,
         </SettingSection>}
     </>
   } else {
-    return null
+    return <SettingSection title="Join field">
+    <SettingRow>
+      <AdvancedSelect
+        fluid
+        strategy={'fixed'}
+        selectedValues={foreignKeySelect}
+        staticValues={idValues}
+        onChange={joinChange}
+        isOpen={joinSelectOpen}
+        toggle={(isOpen) => setJoinSelectOpen(isOpen)}
+      />
+    </SettingRow>
+  </SettingSection>
   }
 }
