@@ -73,7 +73,7 @@ export default function DataSourceFields ({ parentSource, parentDisplay, source,
   }
   if (parentSource() !== source || (parentSource() === source && parentDisplay())) {
     return <>
-      <SettingSection title="Editable Fields">
+      <SettingSection title="Select Fields">
         <SettingRow>
           <AdvancedSelect
             fluid
@@ -112,7 +112,7 @@ export default function DataSourceFields ({ parentSource, parentDisplay, source,
           />
         </SettingRow>
       </SettingSection>
-      <SettingSection title="Join field">
+     {parentSource() !== source && <SettingSection title="Join field">
         <SettingRow>
           <AdvancedSelect
             fluid
@@ -124,7 +124,7 @@ export default function DataSourceFields ({ parentSource, parentDisplay, source,
             toggle={(isOpen) => setJoinSelectOpen(isOpen)}
           />
         </SettingRow>
-      </SettingSection>
+      </SettingSection>}
       {!geometryType &&
         <SettingSection>
           <div className='w-100 table-options' >

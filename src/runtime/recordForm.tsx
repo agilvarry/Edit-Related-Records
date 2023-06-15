@@ -39,10 +39,16 @@ export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, se
   const getLongFields = () => {
     return sourceFields.filter(f => f.length > 500).map(f => f.name)
   }
+  const fieldLengths = (): { [key: string]: number } => {
+    const lengths = {}
+    sourceFields.forEach(f => { lengths[f.name] = f.length })
+    return lengths
+  }
 
   const [formValues, setFormValues] = React.useState<Object>(getValues(dataRecord))
 
   const longFields = getLongFields()
+  const lengths = fieldLengths()
 
   const onSubmit = () => {
     const record = { ...dataRecord }
@@ -74,9 +80,9 @@ export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, se
           val = <CalciteInput id={f} read-only value={formValues[f]}></CalciteInput>
         } else if (type === 'esriFieldTypeString') {
           if (longFields.includes(f)) {
-            val = <textarea id={f} onChange={handleChange} value={formValues[f]}> </textarea>
+            val = <textarea id={f} maxLength={lengths[f]} onChange={handleChange} value={formValues[f]}> </textarea>
           } else {
-            val = <CalciteInputText id={f} onCalciteInputTextInput={handleChange} value={formValues[f]}></CalciteInputText>
+            val = <CalciteInputText id={f} maxLength={lengths[f]} onCalciteInputTextInput={handleChange} value={formValues[f]}></CalciteInputText>
           }
         } else if (type === 'esriFieldTypeDate') {
           val = <CalciteInputDatePicker id={f} onCalciteInputDatePickerChange={handleChange} value={formValues[f]}></CalciteInputDatePicker>

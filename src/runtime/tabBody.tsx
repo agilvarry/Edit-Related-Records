@@ -5,21 +5,14 @@ import {
 } from 'calcite-components'
 
 import Graphic from 'esri/Graphic'
-interface configProps {
-  foreignKey: string
-  header: string
-  subHeader: string
-  newFeatures: boolean
-  parentDataSource: string
-  displayParent: boolean
-}
+import { configProps } from '../types'
 
 interface Props {
   dataSource: ImmutableObject<UseDataSource>
-  globalId: string[]
-  setGlobalId: (globalId: string[]) => void
+  globalId: string
   widgetId: string
   config: configProps
+  isParent: boolean
 }
 
 export default function TabBody (props: Props) {
@@ -27,7 +20,6 @@ export default function TabBody (props: Props) {
   const query: FeatureLayerQueryParams = { where: '1=1', pageSize: 1000 }
   const [selected, setSelected] = React.useState<FeatureDataRecord>(null)
   const [editType, setEditType] = React.useState<string>(null)
-
   const updateRecord = (record: FeatureDataRecord, editType: string): void => {
     const updates = new Graphic({
       attributes: record
@@ -81,7 +73,7 @@ export default function TabBody (props: Props) {
   const formatIfDate = (esriType: string, attribute: any): string => {
     const res = esriType === 'esriFieldTypeDate' && attribute ? new Date(attribute).toLocaleDateString() : attribute
     if (res === 0) {
-      return null
+      return 'No Date git '
     }
     return res
   }
@@ -91,19 +83,12 @@ export default function TabBody (props: Props) {
       return null
     }
     setDS(ds)
-    // const props.parentDataSource ===  selectedIds = ds.getSelectedRecordIds()
-    const selectedRecords = ds.getSelectedRecords().map(r => r.getData())
-    if (selectedRecords[0] && selectedRecords[0].globalid !== props.globalId) {
-      props.setGlobalId(selectedRecords[0].globalid)
-      return null
-    }
 
-    if (ds && props.config && props.config.foreignKey && props.config.header && props.dataSource.fields) {
-      const allRecords = ds.getRecords()
-      const allData = allRecords.map(r => r.getData())
-      const data = allData.filter(res => res.globalid === props.globalId || res[props.config.foreignKey] === props.globalId)
-      const schema = ds.getFetchedSchema().fields
-      return <div>
+    const allRecords = ds.getRecords()
+    const allData = allRecords.map(r => r.getData())
+    const data = allData.filter(res => res.globalid === props.globalId || res[props.config.foreignKey] === props.globalId)
+    const schema = ds.getFetchedSchema().fields
+    return <div>
         {selected
           ? <RecordForm
             sourceFields={ds.layer.fields}
@@ -126,15 +111,18 @@ export default function TabBody (props: Props) {
           </CalciteList>
         }
       </div>
-    } else {
-      //TODO: IDK if this is ever returned
-      return <h3>
-        Configure the data source.
-      </h3>
-    }
   }
-
-  return <DataSourceComponent useDataSource={props.dataSource} query={query} widgetId={props.widgetId} queryCount>
+  if (props.globalId === null) {
+    return <p>
+     No Record Selected {/* TODO: Style this better somehow */}
+  </p>
+  } else if (props.config && props.config.header && props.dataSource.fields && (props.config.foreignKey || props.isParent)) {
+    return <DataSourceComponent useDataSource={props.dataSource} query={query} widgetId={props.widgetId} queryCount>
     {tabRender}
   </DataSourceComponent>
+  } else {
+    return <p>
+      Configure the data source.
+    </p>
+  }
 }

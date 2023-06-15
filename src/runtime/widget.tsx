@@ -2,26 +2,25 @@ import {
   CalciteTabNav, CalciteTabs, CalciteTabTitle, CalciteTab
 } from 'calcite-components'
 import {
-  React, DataSource, AllWidgetProps, DataSourceComponent, FeatureLayerQueryParams, DataSourceManager
+  React, DataSource, AllWidgetProps, DataSourceComponent, FeatureLayerQueryParams, IMDataSourceInfo
 } from 'jimu-core'
 import TabBody from './tabBody'
+import { configProps } from '../types'
 
 /**
  * This widget will show features from a configured feature layer
  */
-export default function Widget (props: AllWidgetProps<{}>) {
-  //TODO: I need to sort the type issue here so I can access the property directly
-  const parentDataSourceSet = (property: string): string => Object.prototype.hasOwnProperty.call(props.config, property) && props.config[property]
-  const getConfigProp = (property: string): (string | boolean) => {
-    return props.config[property]
-  }
-  const displayDataSource = (dataSourceId: string): boolean => {
-    return (getConfigProp('parentDataSource') !== dataSourceId || (getConfigProp('parentDataSource') === dataSourceId && getConfigProp('displayParent') as boolean))
-  }
-  const isDsConfigured = () => parentDataSourceSet('parentDataSource') && props.useDataSources && props.useDataSources.length > 0 && configPropsForAllLayers
-  const [globalId, setGlobalId] = React.useState<string[]>(null)
 
-  const fetchConfigProp = (prop: string, id: string) => { //TODO: rename this to something like dsprop
+export default function Widget (props: AllWidgetProps<{}>) {
+  const config = props.config as configProps
+
+  const displayDataSource = (dataSourceId: string): boolean => {
+    return (config.parentDataSource !== dataSourceId || (config.parentDataSource === dataSourceId && config.displayParent))
+  }
+  const isDsConfigured = () => config.parentDataSource && props.useDataSources && props.useDataSources.length > 0 && configPropsForAllLayers
+  const [globalId, setGlobalId] = React.useState<string>(null)
+
+  const fetchConfigProp = (prop: string, id: string) => {
     if (Object.prototype.hasOwnProperty.call(props.config, id)) {
       return props.config[id][prop]
     }
@@ -31,17 +30,22 @@ export default function Widget (props: AllWidgetProps<{}>) {
     const ids = props.useDataSources.map(ds => ds.dataSourceId)
     return ids.every(id => Object.prototype.hasOwnProperty.call(props.config, id))
   }
+
   const headerRender = (ds: DataSource) => {
     const label = fetchConfigProp('label', ds.id)
     return <CalciteTabTitle className=" tab-title">
       {label || ds.getLabel()}
     </CalciteTabTitle>
   }
-  const checkSelectedRecords = () => {
-    const dsm = DataSourceManager.getInstance()
-    dsm.getDataSources().forEach(ds => {
-      console.log(ds)
-    })
+
+  const checkSelectedRecords = (ds: DataSource, info: IMDataSourceInfo) => {
+    const selectedRecords = ds.getSelectedRecords().map(r => r.getData())
+    if (selectedRecords.length > 0 && selectedRecords[0].globalid !== globalId) {
+      setGlobalId(selectedRecords[0].globalid)
+    } else if (selectedRecords.length === 0) {
+      setGlobalId(null)
+    }
+    return null
   }
 
   if (!isDsConfigured()) {
@@ -55,6 +59,9 @@ export default function Widget (props: AllWidgetProps<{}>) {
         <CalciteTabs className="jimu-widget surface-1">
           <CalciteTabNav className="" slot="title-group" >
             {props.useDataSources.map(ds => <>
+              {ds.dataSourceId === config.parentDataSource && <DataSourceComponent useDataSource={ds} query={{ where: '1=1' } as FeatureLayerQueryParams} widgetId={props.id} queryCount>
+                {checkSelectedRecords}
+                </DataSourceComponent>}
               {displayDataSource(ds.dataSourceId) && <DataSourceComponent useDataSource={ds} query={{ where: '1=1' } as FeatureLayerQueryParams} widgetId={props.id} queryCount>
                 {headerRender}
                 </DataSourceComponent>}
@@ -62,15 +69,13 @@ export default function Widget (props: AllWidgetProps<{}>) {
             )}
           </CalciteTabNav>
           {props.useDataSources.map(ds => <>
-            {ds.dataSourceId === props.config.parentDataSource && checkSelectedRecords()}
-
             {displayDataSource(ds.dataSourceId) && <CalciteTab>
               <TabBody key={ds.mainDataSourceId}
                 globalId={globalId}
-                setGlobalId={setGlobalId}
                 widgetId={props.id}
                 dataSource={ds}
                 config={props.config[ds.dataSourceId]}
+                isParent={ds.dataSourceId === config.parentDataSource}
               />
             </CalciteTab>}
           </>
