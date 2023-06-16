@@ -3,13 +3,15 @@ import { SettingSection, SettingRow } from 'jimu-ui/advanced/setting-components'
 import { AdvancedSelect, AdvancedSelectItem, Switch, TextInput } from 'jimu-ui'
 import { ChangeEvent } from 'react'
 import DataSourceFieldSettings from './dataSourceFieldSettings'
+import { Config, DSProp } from '../types'
+
 interface Props {
   useDataSource: ImmutableArray<UseDataSource>
   selectedFields: ImmutableArray<any> | ImmutableObject<any>
   widgetId: string
   onFieldChange: (fields: Array<string | number>, sourceId: string) => void
-  configs: any //TODO: what is the type of config?
-  configChange: (sourceId: string, configProp: string, value: any) => void
+  config: Config
+  dsPropChange: (sourceId: string, prop: string, value: any) => void
   configRootParam: (param: string, value: (string | boolean)) => void
 }
 
@@ -24,7 +26,7 @@ export default function DataSourceSettings (props: Props) {
     const dss = dsm.getDataSources()
     const items = Object.keys(dss).filter(ds => ids.includes(dss[ds].id)).map(ds => {
       const select = {} as AdvancedSelectItem
-      select.label = fetchConfigProp('label', dss[ds].id) || dss[ds].getLabel()
+      select.label = fetchProp('label', dss[ds].id) || dss[ds].getLabel()
       select.value = dss[ds].id
       return select
     }) as unknown as AdvancedSelectItem[]
@@ -32,9 +34,9 @@ export default function DataSourceSettings (props: Props) {
     return items
   }
 
-  const fetchConfigProp = (prop: string, id: string): string => {
-    if (Object.prototype.hasOwnProperty.call(props.configs, id)) {
-      return props.configs[id][prop]
+  const fetchProp = (prop: string, id: string): string => {
+    if (Object.prototype.hasOwnProperty.call(props.config, 'dsProps') && Object.prototype.hasOwnProperty.call(props.config.dsProps, id)) {
+      return props.config.dsProps[id][prop]
     }
     return null
   }
@@ -44,7 +46,7 @@ export default function DataSourceSettings (props: Props) {
   const getLabels = (): Labels => {
     const labels = {}
     ids.forEach(id => {
-      labels[id] = fetchConfigProp('label', id)
+      labels[id] = fetchProp('label', id)
     })
     return labels
   }
@@ -72,7 +74,12 @@ export default function DataSourceSettings (props: Props) {
     newLabels[source] = event.target.value
     setLabels(newLabels)
   }
-
+  const fetchDSProp = (id: string): DSProp => {
+    if (Object.prototype.hasOwnProperty.call(props.config, 'dsProps') && Object.prototype.hasOwnProperty.call(props.config.dsProps, id)) {
+      return props.config.dsProps[id] || {} as DSProp
+    }
+    return {} as DSProp
+  }
   const DataSourceFields = (ds: FeatureLayerDataSource, info: IMDataSourceInfo) => {
     if (info.status !== 'LOADED') {
       return null
@@ -80,32 +87,33 @@ export default function DataSourceSettings (props: Props) {
     const fieldSchema = ds.layer.fields
     const previouslySelectedFields = grabDS().fields
     const selectedSchema = previouslySelectedFields ? fieldSchema.filter(s => previouslySelectedFields.includes(s.name)) : []
+    console.log(source)
     return <DataSourceFieldSettings
-      configs= {props.configs}
-      configChange={props.configChange}
+      dsProp={fetchDSProp(source)}
+      dsPropChange={props.dsPropChange}
       onFieldChange={props.onFieldChange}
       source={source}
       fieldSchema={fieldSchema}
       selectedSchema={selectedSchema}
       geometryType={ds.getGeometryType()}
-      fetchConfigProp={fetchConfigProp}
+      // fetchProp={fetchProp}
       parentSource={fetchParentSourceToggle}
       parentDisplay={fetchParentDisplayToggle}
     />
   }
-
+  //TODO these fetch functions may not be necessary with the new config type
   const fetchParentSourceToggle = (): string => {
-    if (Object.prototype.hasOwnProperty.call(props.configs, 'parentDataSource')) {
-      return props.configs.parentDataSource
-    }
-    return null
+    // if (Object.prototype.hasOwnProperty.call(props.config, 'parentDataSource')) { //TODO these fetch functions may not be necessary with the new config type
+    return props.config.parentDataSource || null
+    // }
+    // return null
   }
 
   const fetchParentDisplayToggle = (): boolean => {
-    if (Object.prototype.hasOwnProperty.call(props.configs, 'displayParent')) {
-      return props.configs.displayParent
-    }
-    return false
+    // if (Object.prototype.hasOwnProperty.call(props.config, 'displayParent')) {
+    return props.config.displayParent || false
+    // }
+    // return false
   }
 
   const sourceToggleChange = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
@@ -117,7 +125,7 @@ export default function DataSourceSettings (props: Props) {
   }
 
   const labelSet = (event: string) => {
-    props.configChange(source, 'label', event)
+    props.dsPropChange(source, 'label', event)
   }
 
   const sourceValues = fetchSourceNames()
@@ -158,7 +166,7 @@ export default function DataSourceSettings (props: Props) {
               <Switch
                 className='can-x-switch'
                 id="parentDataSource"
-                checked={props.configs.parentDataSource === source}
+                checked={props.config.parentDataSource === source}
                 onChange={sourceToggleChange}
               />
             </div>

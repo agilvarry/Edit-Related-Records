@@ -16,5 +16,13 @@
   "defaultSize": {
     "width": 400,
     "height": 400
-  }
+  },
+  "messageActions": [
+    {
+      "name": "Listen for Selection",
+      "label": "Listen for Selection",
+      "uri": "actions/listen-action",
+      "settingUri": null
+    }
+  ]
 }

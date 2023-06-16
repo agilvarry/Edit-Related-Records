@@ -4,11 +4,12 @@ import { AdvancedSelect, AdvancedSelectItem, Switch } from 'jimu-ui'
 import { ChangeEvent } from 'react'
 import { GeometryType } from '@esri/arcgis-rest-types'
 import Field from 'esri/layers/support/Field'
+import { DSProp } from '../types'
 
 interface Props {
-  fetchConfigProp: (prop: string, id: string) => string
-  configs: any
-  configChange: (sourceId: string, configProp: string, value: any) => void
+  // fetchProp: (prop: string, id: string) => string
+  dsProp: DSProp
+  dsPropChange: (sourceId: string, prop: string, value: any) => void
   onFieldChange: (fields: Array<string | number>, sourceId: string) => void
   source: string
   geometryType: GeometryType
@@ -17,7 +18,7 @@ interface Props {
   parentSource: () => string
   parentDisplay: () => boolean
 }
-export default function DataSourceFields ({ parentSource, parentDisplay, source, geometryType, fieldSchema, selectedSchema, fetchConfigProp, configs, configChange, onFieldChange }: Props) {
+export default function DataSourceFields ({ parentSource, parentDisplay, source, geometryType, fieldSchema, selectedSchema, dsProp, dsPropChange, onFieldChange }: Props) {
   const idTypes = ['oid', 'global-id', 'guid']
   const [fieldSelectOpen, setFieldSelectOpen] = React.useState<boolean>(false)
   /**
@@ -32,39 +33,45 @@ export default function DataSourceFields ({ parentSource, parentDisplay, source,
     }) as unknown as AdvancedSelectItem[]
   }
 
+  const fetchProp = (prop: string): string => {
+    if (Object.prototype.hasOwnProperty.call(dsProp, prop)) {
+      return dsProp[prop] || null
+    }
+    return null
+  }
   const selectableValues = makeAdvancedSelectItems(fieldSchema.filter(s => !idTypes.includes(s.type)))
   const selectedValues = makeAdvancedSelectItems(selectedSchema)
   const idValues = makeAdvancedSelectItems(fieldSchema.filter(s => idTypes.includes(s.type)))
-  const foreignKeySelect = idValues.filter(v => v.value === fetchConfigProp('foreignKey', source))
-  const headerSelect = selectableValues.filter(v => v.value === fetchConfigProp('header', source))
-  const subHeaderSelect = selectableValues.filter(v => v.value === fetchConfigProp('subHeader', source))
+  const foreignKeySelect = idValues.filter(v => v.value === fetchProp('foreignKey'))
+  const headerSelect = selectableValues.filter(v => v.value === fetchProp('header'))
+  const subHeaderSelect = selectableValues.filter(v => v.value === fetchProp('subHeader'))
 
   const [joinSelectOpen, setJoinSelectOpen] = React.useState<boolean>(false)
   const [headSelectOpen, setHeadSelectOpen] = React.useState<boolean>(false)
   const [subHeadSelectOpen, setSubHeadSelectOpen] = React.useState<boolean>(false)
 
   const fetchNewFeaturesToggle = (): boolean => {
-    if (Object.prototype.hasOwnProperty.call(configs, source)) {
-      return !!configs[source].newFeatures
+    if (Object.prototype.hasOwnProperty.call(dsProp, 'newFeatures')) {
+      return !!dsProp.newFeatures
     }
     return false
   }
   const joinChange = (event: AdvancedSelectItem[]) => {
     const value = event ? event[0].value : null
-    configChange(source, 'foreignKey', value)
+    dsPropChange(source, 'foreignKey', value)
   }
 
   const headChange = (event: AdvancedSelectItem[]) => {
     const value = event ? event[0].value : null
-    configChange(source, 'header', value)
+    dsPropChange(source, 'header', value)
   }
   const subHeadChange = (event: AdvancedSelectItem[]) => {
     const value = event ? event[0].value : null
-    configChange(source, 'subHeader', value)
+    dsPropChange(source, 'subHeader', value)
   }
 
   const toggleChange = (_event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
-    configChange(source, 'newFeatures', checked)
+    dsPropChange(source, 'newFeatures', checked)
   }
 
   const selectChange = (event: AdvancedSelectItem[]) => {
@@ -73,7 +80,7 @@ export default function DataSourceFields ({ parentSource, parentDisplay, source,
   }
   if (parentSource() !== source || (parentSource() === source && parentDisplay())) {
     return <>
-    <SettingSection title="Join field">
+      <SettingSection title="Join field">
         <SettingRow>
           <AdvancedSelect
             fluid
@@ -144,17 +151,17 @@ export default function DataSourceFields ({ parentSource, parentDisplay, source,
     </>
   } else {
     return <SettingSection title="Join field">
-    <SettingRow>
-      <AdvancedSelect
-        fluid
-        strategy={'fixed'}
-        selectedValues={foreignKeySelect}
-        staticValues={idValues}
-        onChange={joinChange}
-        isOpen={joinSelectOpen}
-        toggle={(isOpen) => setJoinSelectOpen(isOpen)}
-      />
-    </SettingRow>
-  </SettingSection>
+      <SettingRow>
+        <AdvancedSelect
+          fluid
+          strategy={'fixed'}
+          selectedValues={foreignKeySelect}
+          staticValues={idValues}
+          onChange={joinChange}
+          isOpen={joinSelectOpen}
+          toggle={(isOpen) => setJoinSelectOpen(isOpen)}
+        />
+      </SettingRow>
+    </SettingSection>
   }
 }

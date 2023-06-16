@@ -1,28 +1,32 @@
-import { React, UseDataSource, ImmutableObject, DataSourceComponent, FeatureLayerQueryParams, FeatureLayerDataSource, FeatureDataRecord, IMDataSourceInfo } from 'jimu-core'
+import { React, FeatureLayerQueryParams, FeatureLayerDataSource, FeatureDataRecord, ImmutableArray } from 'jimu-core'
 import RecordForm from './recordForm'
 import {
   CalciteList, CalciteListItem
 } from 'calcite-components'
 
 import Graphic from 'esri/Graphic'
-import { configProps } from '../types'
+import { DSProp } from '../types'
 
 interface Props {
-  dataSource: ImmutableObject<UseDataSource>
+  dataSource: FeatureLayerDataSource
   globalId: string
   widgetId: string
-  config: configProps
+  dsProp: DSProp
   isParent: boolean
+  fields: ImmutableArray<string>
 }
 
 export default function TabBody (props: Props) {
-  const [ds, setDS] = React.useState<FeatureLayerDataSource>(null)
-  // const where = `${props.config.foreignKey} like '${props.globalId}'` //IDK why this is failing but i think it would make things a lot better if i can just query by globalid
-  // console.log(where)
-  const testWhere = "Comments = 'kittyies'"
-  const query: FeatureLayerQueryParams = { where: testWhere, pageSize: 1000 }
   const [selected, setSelected] = React.useState<FeatureDataRecord>(null)
   const [editType, setEditType] = React.useState<string>(null)
+  const [data, setData] = React.useState<FeatureDataRecord[]>(null)
+  const where = `${props.dsProp.foreignKey} like '${props.globalId}'` //IDK why this is failing but i think it would make things a lot better if i can just query by globalid
+
+  async function otherQueryDataSource () {
+    const query: FeatureLayerQueryParams = { where: where, pageSize: 1000 }
+    const res = await props.dataSource.query(query)
+    setData(res.records as FeatureDataRecord[])
+  }
   const updateRecord = (record: FeatureDataRecord, editType: string): void => {
     const updates = new Graphic({
       attributes: record
@@ -39,12 +43,12 @@ export default function TabBody (props: Props) {
   }
 
   const canMakeNewFeatures = (): boolean => {
-    return !!props.config.newFeatures
+    return !!props.dsProp.newFeatures
   }
 
   const applyEditsToTable = (edits: any): void => {
-    ds.layer.applyEdits(edits).then(_res => {
-      ds.setSourceRecords(ds.getRecords())
+    props.dataSource.layer.applyEdits(edits).then(_res => {
+      otherQueryDataSource()
     }).catch((error) => {
       console.log('error = ', error)
     })
@@ -61,8 +65,8 @@ export default function TabBody (props: Props) {
 
   const fetchAttributes = (): FeatureDataRecord => {
     const attributes = {} as FeatureDataRecord
-    props.dataSource.fields.forEach(f => { attributes[f] = null })
-    attributes[props.config.foreignKey] = props.globalId
+    props.fields.forEach(f => { attributes[f] = null })
+    attributes[props.dsProp.foreignKey] = props.globalId
 
     return attributes
   }
@@ -81,48 +85,45 @@ export default function TabBody (props: Props) {
     return res
   }
 
-  const tabRender = (ds: FeatureLayerDataSource, info: IMDataSourceInfo) => {
-    if (info.status !== 'LOADED') {
-      return null
+  React.useEffect(() => {
+    async function queryDataSource () {
+      const query: FeatureLayerQueryParams = { where: where, pageSize: 1000 }
+      const res = await props.dataSource.query(query)
+      setData(res.records as FeatureDataRecord[])
     }
-    setDS(ds)
+    queryDataSource()
+    removeSelected()
+  }, [props.dataSource, props.dsProp.foreignKey, props.globalId, setData, where])
 
-    const allRecords = ds.getRecords()
-    const allData = allRecords.map(r => r.getData())
-    const data = allData.filter(res => res[props.config.foreignKey] === props.globalId)
-    const schema = ds.getFetchedSchema().fields
-    return <div>
-        {selected
-          ? <RecordForm
-            sourceFields={ds.layer.fields}
-            fieldSchema={schema}
-            dataRecord={selected}
-            selectedFields={props.dataSource.fields}
-            updateRecord={updateRecord}
-            cancelUpdate={removeSelected}
-            editType={editType}
-          />
-          : <CalciteList>
-            {canMakeNewFeatures() && <CalciteListItem label="Create New Record" onCalciteListItemSelect={() => newItem()} ></CalciteListItem>}
-            {data.length > 0
-              ? data.map(d => {
-                const header = formatIfDate(schema[props.config.header].esriType, d[props.config.header])
-                const subheader = props.config.subHeader ? formatIfDate(schema[props.config.subHeader].esriType, d[props.config.subHeader]) : null //TODO: Can evaluate to 0 currently
-                return <CalciteListItem label={header} description={subheader} onCalciteListItemSelect={() => itemSelected(d)} ></CalciteListItem>
-              })
-              : <CalciteListItem label="No Available Records"></CalciteListItem>}
-          </CalciteList>
-        }
-      </div>
-  }
+  const schema = props.dataSource.getFetchedSchema().fields
   if (props.globalId === null) {
     return <p>
      No Record Selected {/* TODO: Style this better somehow */}
   </p>
-  } else if (props.config && props.config.header && props.dataSource.fields && props.config.foreignKey) {
-    return <DataSourceComponent useDataSource={props.dataSource} query={query} widgetId={props.widgetId} queryCount>
-    {tabRender}
-  </DataSourceComponent>
+  } else if (props.dsProp && props.dsProp.header && props.fields && props.dsProp.foreignKey && data) {
+    return <div>
+    {selected
+      ? <RecordForm
+        sourceFields={props.dataSource.layer.fields}
+        fieldSchema={schema}
+        dataRecord={selected}
+        selectedFields={props.fields}
+        updateRecord={updateRecord}
+        cancelUpdate={removeSelected}
+        editType={editType}
+      />
+      : <CalciteList>
+        {canMakeNewFeatures() && <CalciteListItem label="Create New Record" onCalciteListItemSelect={() => newItem()} ></CalciteListItem>}
+        {data.length > 0
+          ? data.map(r => {
+            const d = r.getData() as FeatureDataRecord
+            const header = formatIfDate(schema[props.dsProp.header].esriType, d[props.dsProp.header])
+            const subheader = props.dsProp.subHeader ? formatIfDate(schema[props.dsProp.subHeader].esriType, d[props.dsProp.subHeader]) : null //TODO: Can evaluate to 0 currently
+            return <CalciteListItem label={header} description={subheader} onCalciteListItemSelect={() => itemSelected(d)} ></CalciteListItem>
+          })
+          : <CalciteListItem label="No Available Records"></CalciteListItem>}
+      </CalciteList>}
+  </div>
   } else {
     return <p>
       Configure the data source.

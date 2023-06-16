@@ -4,6 +4,7 @@ import { AllWidgetSettingProps } from 'jimu-for-builder'
 import { DataSourceSelector } from 'jimu-ui/advanced/data-source-selector'
 import DataSourceSettings from './dataSourceSettings'
 import { SettingSection, SettingRow } from 'jimu-ui/advanced/setting-components'
+import { Config, DSProp, DSProps } from '../types'
 
 export default function Setting (props: AllWidgetSettingProps<{}>) {
   const onFieldChange = (allSelectedFields: string[], sourceId: string) => {
@@ -12,16 +13,19 @@ export default function Setting (props: AllWidgetSettingProps<{}>) {
       useDataSources: [...props.useDataSources].map(item => item.dataSourceId === sourceId ? { ...item, ...{ fields: allSelectedFields } } : item)
     })
   }
-  const onConfigChange = (sourceId: string, configProp: string, value: any) => {
-    const newProp = props.config[sourceId] || {}
-    newProp[configProp] = value
+  const onDSPropChange = (sourceId: string, prop: string, value: any) => {
+    const config = props.config as Config
 
-    const newConfig = props.config
-    newConfig[sourceId] = newProp
+    const newDsProps = config.dsProps || {} as DSProps
+    const newProp = newDsProps[sourceId] || {} as DSProp
+    newProp[prop] = value
+    newDsProps[sourceId] = newProp
+    config.dsProps = newDsProps
+
     props.onSettingChange({
       id: props.id,
       useDataSources: [...props.useDataSources], //updating this seems to trigger experience builder to register that a change was made. IDK but i dont like it much
-      config: newConfig
+      config: config
     })
   }
 
@@ -71,8 +75,8 @@ export default function Setting (props: AllWidgetSettingProps<{}>) {
         onFieldChange={onFieldChange}
         selectedFields={selectedFields() || Immutable([])}
         widgetId={props.id}
-        configs={props.config}
-        configChange={onConfigChange}
+        config={props.config as Config}
+        dsPropChange={onDSPropChange}
         configRootParam={configRootParam}
       />
     }
