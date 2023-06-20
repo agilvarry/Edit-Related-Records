@@ -1,4 +1,4 @@
-import { React, FeatureLayerQueryParams, FeatureLayerDataSource, FeatureDataRecord, ImmutableArray } from 'jimu-core'
+import { React, FeatureLayerQueryParams, FeatureLayerDataSource, FeatureDataRecord, ImmutableArray, appActions, getAppStore } from 'jimu-core'
 import RecordForm from './recordForm'
 import {
   CalciteList, CalciteListItem
@@ -22,11 +22,10 @@ export default function TabBody (props: Props) {
   const [data, setData] = React.useState<FeatureDataRecord[]>(null)
   const where = `${props.dsProp.foreignKey} like '${props.globalId}'` //IDK why this is failing but i think it would make things a lot better if i can just query by globalid
 
-  async function otherQueryDataSource () {
+  async function otherQueryDataSource () { //TODO: code duplication
     const query: FeatureLayerQueryParams = { where: where, pageSize: 1000 }
     const res = await props.dataSource.query(query)
     setData(res.records as FeatureDataRecord[])
-    props.dataSource.setSourceRecords(props.dataSource.getRecords())
   }
 
   const updateRecord = (record: FeatureDataRecord, editType: string): void => {
@@ -51,6 +50,8 @@ export default function TabBody (props: Props) {
   const applyEditsToTable = (edits: any): void => {
     props.dataSource.layer.applyEdits(edits).then(_res => {
       otherQueryDataSource()
+      props.dataSource.setSourceRecords(props.dataSource.getRecords()) //To refresh other widgets
+      getAppStore().dispatch(appActions.widgetStatePropChange(props.widgetId, 'selection', null)) //deselect globalid because we lose selection when we refresh other widgets
     }).catch((error) => {
       console.log('error = ', error)
     })

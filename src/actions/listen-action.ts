@@ -2,6 +2,7 @@ import { AbstractMessageAction, MessageType, Message, getAppStore, appActions, D
 
 export default class QueryAction extends AbstractMessageAction {
   filterMessageDescription (messageDescription: MessageDescription): boolean {
+    console.log(messageDescription)
     return [MessageType.DataRecordsSelectionChange].includes(messageDescription.messageType)
   }
 
@@ -15,6 +16,7 @@ export default class QueryAction extends AbstractMessageAction {
   }
 
   onExecute (message: Message, actionConfig?: any): Promise<boolean> | boolean {
+    console.log(message)
     if (message.type === MessageType.DataRecordsSelectionChange) {
       const selectionMessage = message as DataRecordsSelectionChangeMessage
       const record = selectionMessage.records[0] || null
