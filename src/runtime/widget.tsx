@@ -31,7 +31,7 @@ export default function Widget (props: AllWidgetProps<{}>) {
     })
   }, [dsm, props.useDataSources])
 
-  return dss?.length === props.useDataSources.length && <App
+  return dss?.length === props.useDataSources.length && <div className="widget-content esri-widget" style={{ border: '1px solid var(--dark)' }}><App
   props={props}
-  dss={dss} />
+  dss={dss} /></div>
 }
