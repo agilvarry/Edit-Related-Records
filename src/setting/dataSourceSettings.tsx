@@ -1,4 +1,4 @@
-import { React, ImmutableArray, UseDataSource, ImmutableObject, DataSourceComponent, FeatureLayerQueryParams, IMDataSourceInfo, FeatureLayerDataSource, DataSourceManager } from 'jimu-core'
+import { React, ImmutableArray, UseDataSource, ImmutableObject, DataSourceComponent, getAppStore, appActions, FeatureLayerQueryParams, IMDataSourceInfo, FeatureLayerDataSource, DataSourceManager } from 'jimu-core'
 import { SettingSection, SettingRow } from 'jimu-ui/advanced/setting-components'
 import { AdvancedSelect, AdvancedSelectItem, Switch, TextInput } from 'jimu-ui'
 import { ChangeEvent } from 'react'
@@ -96,28 +96,33 @@ export default function DataSourceSettings (props: Props) {
       fieldSchema={fieldSchema}
       selectedSchema={selectedSchema}
       geometryType={ds.getGeometryType()}
-      // fetchProp={fetchProp}
       parentSource={fetchParentSourceToggle}
       parentDisplay={fetchParentDisplayToggle}
     />
   }
   //TODO these fetch functions may not be necessary with the new config type
   const fetchParentSourceToggle = (): string => {
-    // if (Object.prototype.hasOwnProperty.call(props.config, 'parentDataSource')) { //TODO these fetch functions may not be necessary with the new config type
-    return props.config.parentDataSource || null
-    // }
-    // return null
+    if (Object.prototype.hasOwnProperty.call(props.config, 'parentDataSource')) { //TODO these fetch functions may not be necessary with the new config type
+      return props.config.parentDataSource
+    }
+    return null
   }
 
   const fetchParentDisplayToggle = (): boolean => {
-    // if (Object.prototype.hasOwnProperty.call(props.config, 'displayParent')) {
-    return props.config.displayParent || false
-    // }
-    // return false
+    if (Object.prototype.hasOwnProperty.call(props.config, 'displayParent')) {
+      return props.config.displayParent
+    }
+    return false
   }
 
   const sourceToggleChange = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
-    checked ? props.configRootParam(event.target.id, source) : props.configRootParam(event.target.id, null)
+    if (checked) {
+      getAppStore().dispatch(appActions.widgetStatePropChange(props.widgetId, 'parentDataSource', source))
+      props.configRootParam(event.target.id, source)
+    } else {
+      getAppStore().dispatch(appActions.widgetStatePropChange(props.widgetId, 'parentDataSource', null))
+      props.configRootParam(event.target.id, null)
+    }
   }
 
   const displayParentToggleChange = (event: ChangeEvent<HTMLInputElement>, checked: boolean) => {

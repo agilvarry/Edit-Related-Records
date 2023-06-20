@@ -2,7 +2,7 @@ import {
   CalciteTabNav, CalciteTabs, CalciteTabTitle, CalciteTab
 } from 'calcite-components'
 import {
-  React, AllWidgetProps, FeatureLayerDataSource, ImmutableArray, getAppStore
+  React, AllWidgetProps, FeatureLayerDataSource, ImmutableArray
 } from 'jimu-core'
 import TabBody from './tabBody'
 import { Config } from '../types'
@@ -10,20 +10,21 @@ import { Config } from '../types'
 interface Props {
   props: AllWidgetProps<{}>
   dss: FeatureLayerDataSource[]
-//   configs: PropConfigs
+}
+interface Selection {
+  selectionId: string
+  sourceId: string
 }
 interface StateProps {
-  selectionId: string
+  selection: Selection
 }
 export default function App ({ props, dss }: Props) {
+  const config = props.config as Config
   const stateProps = props.stateProps || {} as StateProps
 
-  const store = getAppStore().getState()
-  console.log(store.queryObject.data_id)
+  const selection = Object.prototype.hasOwnProperty.call(stateProps, 'selection') ? stateProps.selection : null
+  const globalId = selection && selection.sourceId === config.parentDataSource ? selection.selectionId : null
 
-  const globalId = Object.prototype.hasOwnProperty.call(stateProps, 'selectionId') ? stateProps.selectionId : null
-
-  const config = props.config as Config
   const displayDataSource = (dataSourceId: string): boolean => (config.parentDataSource !== dataSourceId || (config.parentDataSource === dataSourceId && config.displayParent))
   const isDsConfigured = () => config.parentDataSource && props.useDataSources && props.useDataSources.length > 0 && configPropsForAllLayers()
 

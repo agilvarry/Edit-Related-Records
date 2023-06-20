@@ -1,5 +1,5 @@
 import {
-  React, AllWidgetProps, DataSourceManager, FeatureLayerDataSource, getAppStore
+  React, AllWidgetProps, DataSourceManager, FeatureLayerDataSource
 } from 'jimu-core'
 import App from './app'
 
@@ -11,8 +11,6 @@ export default function Widget (props: AllWidgetProps<{}>) {
   const [dss, setDss] = React.useState<FeatureLayerDataSource[]>(null)
   const dsm = DataSourceManager.getInstance()
 
-  const store = getAppStore().getState()
-  console.log(store.queryObject.data_id)
   React.useEffect(() => {
     const fetchDss = () => {
       const flds = [] as FeatureLayerDataSource[]
@@ -32,8 +30,6 @@ export default function Widget (props: AllWidgetProps<{}>) {
       fetchDss()
     })
   }, [dsm, props.useDataSources])
-
-  console.log(props)
 
   return dss?.length === props.useDataSources.length && <App
   props={props}
