@@ -26,7 +26,9 @@ export default function TabBody (props: Props) {
     const query: FeatureLayerQueryParams = { where: where, pageSize: 1000 }
     const res = await props.dataSource.query(query)
     setData(res.records as FeatureDataRecord[])
+    props.dataSource.setSourceRecords(props.dataSource.getRecords())
   }
+
   const updateRecord = (record: FeatureDataRecord, editType: string): void => {
     const updates = new Graphic({
       attributes: record
@@ -97,9 +99,7 @@ export default function TabBody (props: Props) {
 
   const schema = props.dataSource.getFetchedSchema().fields
   if (props.globalId === null) {
-    return <p>
-     No Record Selected {/* TODO: Style this better somehow */}
-  </p>
+    return <CalciteList><CalciteListItem label="No Record Selected"></CalciteListItem></CalciteList>
   } else if (props.dsProp && props.dsProp.header && props.fields && props.dsProp.foreignKey && data) {
     return <div>
     {selected
@@ -125,8 +125,6 @@ export default function TabBody (props: Props) {
       </CalciteList>}
   </div>
   } else {
-    return <p>
-      Configure the data source.
-    </p>
+    return <CalciteList><CalciteListItem label="Configure the Data Source"></CalciteListItem></CalciteList>
   }
 }

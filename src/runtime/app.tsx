@@ -1,5 +1,5 @@
 import {
-  CalciteTabNav, CalciteTabs, CalciteTabTitle, CalciteTab
+  CalciteTabNav, CalciteTabs, CalciteTabTitle, CalciteTab, CalciteListItem, CalciteList
 } from 'calcite-components'
 import {
   React, AllWidgetProps, FeatureLayerDataSource, ImmutableArray
@@ -48,11 +48,7 @@ export default function App ({ props, dss }: Props) {
   }
 
   if (!isDsConfigured()) {
-    return <h3>
-      This widget allows you to edit related tables in a feature layer
-      <br />
-      Configure the data source.
-    </h3>
+    return <CalciteList><CalciteListItem label="This widget allows you to edit related tables in a feature layer" description='Configure the data source.'></CalciteListItem></CalciteList>
   } else {
     return <div className="" style={{ border: 'black 1px', width: '100%', height: '100%', backgroundColor: '#ffffff' }}>
         <CalciteTabs className="jimu-widget surface-1" style={{ padding: '10px 16px 16px' }}>

@@ -1,6 +1,6 @@
 import { React, ImmutableObject, FeatureDataRecord, FieldSchema, ImmutableArray } from 'jimu-core'
 import {
-  CalciteButton, CalciteInputText, CalciteLabel, CalciteInputDatePicker, CalciteInputNumber, CalciteInput
+  CalciteButton, CalciteInputText, CalciteLabel, CalciteInputDatePicker, CalciteInputNumber, CalciteInput, CalciteOption, CalciteSelect
 } from 'calcite-components'
 import Field from 'esri/layers/support/Field'
 
@@ -15,6 +15,17 @@ interface Props {
 }
 
 export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, selectedFields, fieldSchema, updateRecord, editType }: Props) {
+  const fetchCodedDomainValues = (): { [field: string]: __esri.CodedValue[] } => {
+    const codedDomains = {}
+    sourceFields.forEach(field => {
+      if (field.domain && field.domain.type === 'coded-value') {
+        codedDomains[field.name] = field.domain.codedValues
+      }
+    })
+    return codedDomains
+  }
+
+  const codedDomains = fetchCodedDomainValues()
   const editable = sourceFields.map(f => f.editable && f.name).filter(f => f)
   const getValues = (dataRecord: FeatureDataRecord) => {
     const entries = Object.entries(dataRecord)
@@ -65,18 +76,24 @@ export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, se
   }
 
   const handleChange = (e: any): void => { //TODO: need to figure Calcite Event Type
+    console.log(e)
     const v = {
       ...formValues, [e.target.id]: e.target.value
     }
     setFormValues(v)
   }
-  return <div>
+  return <div style={{ marginTop: '12px' }}>
     {
       selectedFields.map((f: string) => {
         const type = fieldSchema[f].esriType
         const alias = fieldSchema[f].alias
         let val: JSX.Element
-        if (!editable.includes(f)) {
+        if (Object.prototype.hasOwnProperty.call(codedDomains, f)) { //TODO: would a switch read better?
+          console.log(formValues[f])
+          val = <CalciteSelect onCalciteSelectChange={handleChange} label={f} id={f} name={f} value={formValues[f]}>
+                {codedDomains[f].map(v => <CalciteOption selected={v.name === formValues[f]} value={v.code}>{v.name}</CalciteOption>)}
+          </CalciteSelect>
+        } else if (!editable.includes(f)) {
           val = <CalciteInput id={f} read-only value={formValues[f]}></CalciteInput>
         } else if (type === 'esriFieldTypeString') {
           if (longFields.includes(f)) {
@@ -91,6 +108,7 @@ export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, se
         } else {
           val = <CalciteInput onCalciteInputChange={handleChange} value={formValues[f]} id={f}></CalciteInput>
         }
+
         return <CalciteLabel>
           {alias}
           {val}
