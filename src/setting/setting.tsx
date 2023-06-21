@@ -48,6 +48,13 @@ export default function Setting (props: AllWidgetSettingProps<{}>) {
   }
 
   const onDataSourceChange = (useDataSources: UseDataSource[]): void => {
+    const config = props.config as Config
+    if (config.parentDataSource) {
+      const ids = useDataSources.map(ds => ds.dataSourceId)
+      if (!ids.includes(config.parentDataSource)) {
+        configRootParam('parentDataSource', null)
+      }
+    }
     props.onSettingChange({
       id: props.id,
       useDataSources: useDataSources

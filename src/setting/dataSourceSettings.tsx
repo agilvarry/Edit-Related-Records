@@ -53,9 +53,11 @@ export default function DataSourceSettings (props: Props) {
 
   const [labels, setLabels] = React.useState<Labels>(() => getLabels())
   const [source, setSource] = React.useState<string>(ids[0])
-
+  //checks to see if our datasource ids includes the current source, in case we deselect a datasource that is currently visible in settings
+  if (!ids.includes(source)) {
+    setSource(ids[0])
+  }
   const [sourceSelectOpen, setSourceSelectOpen] = React.useState<boolean>(false)
-
   const datasourceUpdate = (e: AdvancedSelectItem[]) => {
     setSource(e[0].value as string)
   }
@@ -65,15 +67,18 @@ export default function DataSourceSettings (props: Props) {
     props.useDataSource.forEach((ds, i) => {
       if (ds.dataSourceId === source) index = i
     })
+
     return <DataSourceComponent useDataSource={props.useDataSource[index]} query={{ where: '1=1' } as FeatureLayerQueryParams} widgetId={props.widgetId}>
       {DataSourceFields}
     </DataSourceComponent>
   }
+
   const labelChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newLabels = { ...labels }
     newLabels[source] = event.target.value
     setLabels(newLabels)
   }
+
   const fetchDSProp = (id: string): DSProp => {
     if (Object.prototype.hasOwnProperty.call(props.config, 'dsProps') && Object.prototype.hasOwnProperty.call(props.config.dsProps, id)) {
       return props.config.dsProps[id] || {} as DSProp
@@ -87,7 +92,7 @@ export default function DataSourceSettings (props: Props) {
     const fieldSchema = ds.layer.fields
     const previouslySelectedFields = grabDS().fields
     const selectedSchema = previouslySelectedFields ? fieldSchema.filter(s => previouslySelectedFields.includes(s.name)) : []
-    console.log(source)
+
     return <DataSourceFieldSettings
       dsProp={fetchDSProp(source)}
       dsPropChange={props.dsPropChange}
@@ -100,7 +105,7 @@ export default function DataSourceSettings (props: Props) {
       parentDisplay={fetchParentDisplayToggle}
     />
   }
-  //TODO these fetch functions may not be necessary with the new config type
+
   const fetchParentSourceToggle = (): string => {
     if (Object.prototype.hasOwnProperty.call(props.config, 'parentDataSource')) { //TODO these fetch functions may not be necessary with the new config type
       return props.config.parentDataSource
