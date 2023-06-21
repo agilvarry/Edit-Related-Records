@@ -51,28 +51,31 @@ export default function App ({ props, dss }: Props) {
     return <CalciteList><CalciteListItem label="This widget allows you to edit related tables in a feature layer" description='Configure the data source.'></CalciteListItem></CalciteList>
   } else {
     return <div className="" style={{ border: 'black 1px', width: '100%', height: '100%', backgroundColor: '#ffffff' }}>
-        <CalciteTabs className="jimu-widget surface-1" style={{ padding: '10px 16px 16px' }}>
-          <CalciteTabNav className="" slot="title-group" >
-            {dss.map(ds => {
+      <CalciteTabs className="jimu-widget surface-1" style={{ padding: '10px 16px 16px' }}>
+        <CalciteTabNav className="" slot="title-group" >
+          {dss.map(ds => {
+            if (ds.id !== config.parentDataSource || (ds.id === config.parentDataSource && config.displayParent)) {
               return <CalciteTabTitle className=" tab-title">
                 {fetchProp('label', ds.id) || ds.getLabel()}
               </CalciteTabTitle>
-            })}
-          </CalciteTabNav >
-          {dss.map(ds => <>
-            {displayDataSource(ds.id) && <CalciteTab style={{ paddingBlock: 'inherit' }}>
-              <TabBody
-                globalId={globalId}
-                widgetId={props.id}
-                fields={fetchFields(ds.id)}
-                dataSource={ds}
-                dsProp={config.dsProps[ds.id]}
-                isParent={ds.id === config.parentDataSource}
-              />
-            </CalciteTab>}
-          </>
-          )}
-        </CalciteTabs>
-      </div>
+            }
+            return null
+          })}
+        </CalciteTabNav >
+        {dss.map(ds => <>
+          {displayDataSource(ds.id) && <CalciteTab style={{ paddingBlock: 'inherit' }}>
+            <TabBody
+              globalId={globalId}
+              widgetId={props.id}
+              fields={fetchFields(ds.id)}
+              dataSource={ds}
+              dsProp={config.dsProps[ds.id]}
+              isParent={ds.id === config.parentDataSource}
+            />
+          </CalciteTab>}
+        </>
+        )}
+      </CalciteTabs>
+    </div>
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "udot-table-editing",
-  "version": "0.7.2",
+  "version": "0.7.4",
   "description": "ArcGIS Experience builder Widget for editing related tables in a form",
   "main": "widget.tsx",
   "scripts": {

@@ -2,10 +2,9 @@ import { React, ImmutableObject, FeatureDataRecord, FieldSchema, ImmutableArray 
 import {
   CalciteButton, CalciteInputText, CalciteLabel, CalciteInputDatePicker, CalciteInputNumber, CalciteInput, CalciteOption, CalciteSelect
 } from 'calcite-components'
-import Field from 'esri/layers/support/Field'
 
 interface Props {
-  sourceFields: Field[]
+  sourceFields: __esri.Field[]
   dataRecord: FeatureDataRecord
   editType: string
   selectedFields: string[] | ImmutableArray<string>
@@ -32,6 +31,7 @@ export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, se
     const values = {}
     entries.forEach(v => {
       const type = fieldSchema[v[0]].esriType
+      console.log(type)
       if (type === 'esriFieldTypeDate') {
         if (v[1]) {
           const date = new Date(v[1])
@@ -89,9 +89,8 @@ export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, se
         const alias = fieldSchema[f].alias
         let val: JSX.Element
         if (Object.prototype.hasOwnProperty.call(codedDomains, f)) { //TODO: would a switch read better?
-          console.log(formValues[f])
           val = <CalciteSelect onCalciteSelectChange={handleChange} label={f} id={f} name={f} value={formValues[f]}>
-                {codedDomains[f].map(v => <CalciteOption selected={v.name === formValues[f]} value={v.code}>{v.name}</CalciteOption>)}
+                {codedDomains[f].map(v => <CalciteOption selected={v.code === formValues[f]} value={v.code}>{v.name}</CalciteOption>)}
           </CalciteSelect>
         } else if (!editable.includes(f)) {
           val = <CalciteInput id={f} read-only value={formValues[f]}></CalciteInput>
