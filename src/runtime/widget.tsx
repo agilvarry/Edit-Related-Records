@@ -15,8 +15,8 @@ export default function Widget (props: AllWidgetProps<{}>) {
     const fetchDss = () => {
       const flds = [] as FeatureLayerDataSource[]
       try {
-        dsm.createAllDataSources().then(dss => {
-          props.useDataSources.forEach(ds => {
+        dsm.createAllDataSources().then(_dss => {
+          props.useDataSources?.forEach(ds => {
             const dataSource = dsm.getDataSource(ds.dataSourceId) as FeatureLayerDataSource
             flds.push(dataSource)
           })
@@ -31,7 +31,7 @@ export default function Widget (props: AllWidgetProps<{}>) {
     })
   }, [dsm, props.useDataSources])
 
-  return dss?.length === props.useDataSources.length && <div className="widget-content esri-widget" style={{ border: '1px solid var(--dark)' }}><App
+  return dss?.length === props.useDataSources?.length && <div className="widget-content esri-widget" style={{ border: '1px solid var(--dark)' }}><App
   props={props}
   dss={dss} /></div>
 }

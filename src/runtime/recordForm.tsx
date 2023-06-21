@@ -31,7 +31,6 @@ export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, se
     const values = {}
     entries.forEach(v => {
       const type = fieldSchema[v[0]].esriType
-      console.log(type)
       if (type === 'esriFieldTypeDate') {
         if (v[1]) {
           const date = new Date(v[1])
