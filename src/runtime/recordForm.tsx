@@ -75,7 +75,6 @@ export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, se
   }
 
   const handleChange = (e: any): void => { //TODO: need to figure Calcite Event Type
-    console.log(e)
     const v = {
       ...formValues, [e.target.id]: e.target.value
     }

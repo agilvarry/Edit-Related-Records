@@ -10,20 +10,11 @@ import { Config } from '../types'
 interface Props {
   props: AllWidgetProps<{}>
   dss: FeatureLayerDataSource[]
+  globalId: string
 }
-interface Selection {
-  selectionId: string
-  sourceId: string
-}
-interface StateProps {
-  selection: Selection
-}
-export default function App ({ props, dss }: Props) {
-  const config = props.config as Config
-  const stateProps = props.stateProps || {} as StateProps
 
-  const selection = Object.prototype.hasOwnProperty.call(stateProps, 'selection') ? stateProps.selection : null
-  const globalId = selection && selection.sourceId === config.parentDataSource ? selection.selectionId : null
+export default function App ({ props, dss, globalId }: Props) {
+  const config = props.config as Config
 
   const displayDataSource = (dataSourceId: string): boolean => (config.parentDataSource !== dataSourceId || (config.parentDataSource === dataSourceId && config.displayParent))
   const isDsConfigured = () => config.parentDataSource && props.useDataSources && props.useDataSources.length > 0 && configPropsForAllLayers()
@@ -43,6 +34,7 @@ export default function App ({ props, dss }: Props) {
     return null
   }
 
+  //get fields from UseDataSource for current ds Id
   const fetchFields = (id: string): ImmutableArray<string> => {
     return props.useDataSources.filter(uds => uds.dataSourceId === id)[0].fields
   }
@@ -61,7 +53,7 @@ export default function App ({ props, dss }: Props) {
             }
             return null
           })}
-        </CalciteTabNav >
+        </CalciteTabNav>
         {dss.map(ds => <>
           {displayDataSource(ds.id) && <CalciteTab style={{ paddingBlock: 'inherit' }}>
             <TabBody

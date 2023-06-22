@@ -7,7 +7,7 @@ export interface DSProp {
 }
 
 export interface DSProps {
-  [key: string]: DSProp
+  [id: string]: DSProp
 }
 
 export interface Config {
@@ -17,4 +17,9 @@ export interface Config {
   newFeatures: boolean
   parentDataSource: string
   displayParent: boolean
+}
+
+export interface Selection {
+  selectionId: string
+  sourceId: string
 }

@@ -20,7 +20,7 @@ export default function TabBody (props: Props) {
   const [selected, setSelected] = React.useState<FeatureDataRecord>(null)
   const [editType, setEditType] = React.useState<string>(null)
   const [data, setData] = React.useState<FeatureDataRecord[]>(null)
-  const where = `${props.dsProp.foreignKey} like '${props.globalId}'` //IDK why this is failing but i think it would make things a lot better if i can just query by globalid
+  const where = `${props.dsProp.foreignKey} like '${props.globalId}'`
 
   async function otherQueryDataSource () { //TODO: code duplication
     const query: FeatureLayerQueryParams = { where: where, pageSize: 1000 }
@@ -49,9 +49,9 @@ export default function TabBody (props: Props) {
 
   const applyEditsToTable = (edits: any): void => {
     props.dataSource.layer.applyEdits(edits).then(_res => {
-      otherQueryDataSource()
+      otherQueryDataSource() //to Refresh Widget data
       props.dataSource.setSourceRecords(props.dataSource.getRecords()) //To refresh other widgets
-      getAppStore().dispatch(appActions.widgetStatePropChange(props.widgetId, 'selection', null)) //deselect globalid because we lose selection when we refresh other widgets
+      getAppStore().dispatch(appActions.widgetStatePropChange(props.widgetId, 'changed', where)) //set globalid again to trigger check to see if it's still selected
     }).catch((error) => {
       console.log('error = ', error)
     })
@@ -82,7 +82,7 @@ export default function TabBody (props: Props) {
 
   const formatIfDate = (esriType: string, attribute: any): string => {
     const res = esriType === 'esriFieldTypeDate' && attribute ? new Date(attribute).toLocaleDateString() : attribute
-    if (res === 0) {
+    if (!res) {
       return 'No Date Set'
     }
     return res
