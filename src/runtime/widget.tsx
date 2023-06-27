@@ -14,12 +14,15 @@ export default function Widget (props: AllWidgetProps<{}>) {
   const stateProps = props.stateProps || {} as StateProps
   const config = props.config as Config
 
-  const selectedFeatureIdMatch = (id: string): boolean => {
+  const selectedFeatureIdMatch = async (id: string): Promise<boolean> => {
+    console.log(id)
     const parentForeignKey = config.dsProps[config.parentDataSource].foreignKey
     const ds = dss.filter(ds => ds.id === config.parentDataSource)[0]
+    await ds.ready()
     const ids = ds.getSelectedRecords().map(r => r.getData()[parentForeignKey])
     return ids[0] === id
   }
+
   const [dss, setDss] = React.useState<FeatureLayerDataSource[]>(null)
   const dsm = DataSourceManager.getInstance()
   const selection = Object.prototype.hasOwnProperty.call(stateProps, 'selection') ? stateProps.selection : null
@@ -42,9 +45,8 @@ export default function Widget (props: AllWidgetProps<{}>) {
     }
     setTimeout(function () {
       fetchDss()
-    })
+    }, 1000)
   }, [dsm, props.useDataSources])
-
   return dss?.length === props.useDataSources?.length && <div className="widget-content esri-widget" style={{ border: '1px solid var(--dark)' }}><App
   props={props}
   globalId={globalId}
