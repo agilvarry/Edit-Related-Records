@@ -20,8 +20,10 @@ export default function TabBody (props: Props) {
   const [selected, setSelected] = React.useState<FeatureDataRecord>(null)
   const [editType, setEditType] = React.useState<string>(null)
   const [data, setData] = React.useState<FeatureDataRecord[]>(null)
+  const where = `${props.dsProp.foreignKey} = '${props.globalId}'`
+
   async function otherQueryDataSource () { //TODO: code duplication
-    const query: FeatureLayerQueryParams = { where: `${props.dsProp.foreignKey} = '${props.globalId}'` }
+    const query: FeatureLayerQueryParams = { where: where, pageSize: 1000 }
     const res = await props.dataSource.query(query)
     setData(res.records as FeatureDataRecord[])
   }
@@ -49,7 +51,7 @@ export default function TabBody (props: Props) {
     props.dataSource.layer.applyEdits(edits).then(_res => {
       otherQueryDataSource() //to Refresh Widget data
       props.dataSource.setSourceRecords(props.dataSource.getRecords()) //To refresh other widgets
-      getAppStore().dispatch(appActions.widgetStatePropChange(props.widgetId, 'changed', `${props.dsProp.foreignKey} = '${props.globalId}'`)) //set this to trigger a widget refresh consistent with the feature table refresh. TODO: Need to test this with the map widget
+      getAppStore().dispatch(appActions.widgetStatePropChange(props.widgetId, 'changed', where)) //set globalid again to trigger check to see if it's still selected
     }).catch((error) => {
       console.log('error = ', error)
     })
@@ -88,23 +90,15 @@ export default function TabBody (props: Props) {
 
   React.useEffect(() => {
     async function queryDataSource () {
-      const queryParams = { where: `${props.dsProp.foreignKey} = '${props.globalId}'` } as FeatureLayerQueryParams
-
-      // if (props.isParent) {
-      //   queryParams = { where: `${props.dsProp.foreignKey} = '${props.globalId}'` }
-      // } else {
-      //   queryParams = props.dataSource.getCurrentQueryParams()
-      // }
-      const res = await props.dataSource.query(queryParams)
-      console.log(res)
-
+      const query: FeatureLayerQueryParams = { where: where, pageSize: 1000 }
+      const res = await props.dataSource.query(query)
       setData(res.records as FeatureDataRecord[])
     }
     if (props.globalId) {
       queryDataSource()
       removeSelected()
     }
-  }, [props, setData])
+  }, [props, setData, where])
 
   const schema = props.dataSource.getFetchedSchema().fields
   if (props.globalId === null) {
