@@ -1,6 +1,7 @@
 import { React, FeatureLayerQueryParams, FeatureLayerDataSource, FeatureDataRecord, ImmutableArray, appActions, getAppStore } from 'jimu-core'
 import RecordForm from './recordForm'
 import {
+  CalciteAction,
   CalciteList, CalciteListItem
 } from 'calcite-components'
 
@@ -32,19 +33,26 @@ export default function TabBody (props: Props) {
     const updates = new Graphic({
       attributes: record
     })
-
     if (editType === 'update') {
       const edits = { updateFeatures: [updates] }
       applyEditsToTable(edits)
     } else if (editType === 'create') {
       const edits = { addFeatures: [updates] }
       applyEditsToTable(edits)
+    } else if (editType === 'delete') {
+      const edits = { deleteFeatures: [updates] }
+      applyEditsToTable(edits)
     }
+
     removeSelected()
   }
 
   const canMakeNewFeatures = (): boolean => {
     return !!props.dsProp.newFeatures
+  }
+
+  const canDeleteFeatures = (): boolean => {
+    return !!props.dsProp.deleteFeatures
   }
 
   const applyEditsToTable = (edits: any): void => {
@@ -59,6 +67,11 @@ export default function TabBody (props: Props) {
 
   const itemSelected = (data: FeatureDataRecord) => {
     setEditType('update')
+    setSelected(data)
+  }
+
+  const itemDelete = (data: FeatureDataRecord) => {
+    setEditType('delete')
     setSelected(data)
   }
 
@@ -105,28 +118,30 @@ export default function TabBody (props: Props) {
     return <CalciteList><CalciteListItem label="No Record Selected"></CalciteListItem></CalciteList>
   } else if (props.dsProp && props.dsProp.header && props.fields && props.dsProp.foreignKey && data) {
     return <div>
-    {selected
-      ? <RecordForm
-        sourceFields={props.dataSource.layer.fields}
-        fieldSchema={schema}
-        dataRecord={selected}
-        selectedFields={props.fields}
-        updateRecord={updateRecord}
-        cancelUpdate={removeSelected}
-        editType={editType}
-      />
-      : <CalciteList>
-        {canMakeNewFeatures() && <CalciteListItem label="Create New Record" onCalciteListItemSelect={() => newItem()} ></CalciteListItem>}
-        {data.length > 0
-          ? data.map(r => {
-            const d = r.getData() as FeatureDataRecord
-            const header = formatIfDate(schema[props.dsProp.header].esriType, d[props.dsProp.header])
-            const subheader = props.dsProp.subHeader ? formatIfDate(schema[props.dsProp.subHeader].esriType, d[props.dsProp.subHeader]) : null //TODO: Can evaluate to 0 currently
-            return <CalciteListItem label={header} description={subheader} onCalciteListItemSelect={() => itemSelected(d)} ></CalciteListItem>
-          })
-          : <CalciteListItem label="No Available Records"></CalciteListItem>}
-      </CalciteList>}
-  </div>
+      {selected
+        ? <RecordForm
+          sourceFields={props.dataSource.layer.fields}
+          fieldSchema={schema}
+          dataRecord={selected}
+          selectedFields={props.fields}
+          updateRecord={updateRecord}
+          cancelUpdate={removeSelected}
+          editType={editType}
+        />
+        : <CalciteList>
+          {canMakeNewFeatures() && <CalciteListItem label="Create New Record" onCalciteListItemSelect={() => newItem()} ></CalciteListItem>}
+          {data.length > 0
+            ? data.map(r => {
+              const d = r.getData() as FeatureDataRecord
+              const header = formatIfDate(schema[props.dsProp.header].esriType, d[props.dsProp.header])
+              const subheader = props.dsProp.subHeader ? formatIfDate(schema[props.dsProp.subHeader].esriType, d[props.dsProp.subHeader]) : null //TODO: Can evaluate to 0 currently
+              return <CalciteListItem label={header} description={subheader} onCalciteListItemSelect={() => itemSelected(d)}>
+                {canDeleteFeatures() && <CalciteAction onClick={() => itemDelete(d)} slot="actions-end" text="delete" icon="trash"></CalciteAction>}
+              </CalciteListItem>
+            })
+            : <CalciteListItem label="No Available Records"></CalciteListItem>}
+        </CalciteList>}
+    </div>
   } else {
     return <CalciteList><CalciteListItem label="Configure the Data Source"></CalciteListItem></CalciteList>
   }

@@ -107,7 +107,7 @@ export default function DataSourceSettings (props: Props) {
   }
 
   const fetchParentSourceToggle = (): string => {
-    if (Object.prototype.hasOwnProperty.call(props.config, 'parentDataSource')) { //TODO these fetch functions may not be necessary with the new config type
+    if (Object.prototype.hasOwnProperty.call(props.config, 'parentDataSource')) {
       return props.config.parentDataSource
     }
     return null

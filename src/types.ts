@@ -3,6 +3,7 @@ export interface DSProp {
   header: string
   subHeader: string
   newFeatures: boolean
+  deleteFeatures: boolean
   label: string
 }
 
@@ -14,7 +15,6 @@ export interface Config {
   dsProps: DSProps
   header: string
   subHeader: string
-  newFeatures: boolean
   parentDataSource: string
   displayParent: boolean
 }

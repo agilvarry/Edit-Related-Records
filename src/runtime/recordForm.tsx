@@ -14,6 +14,7 @@ interface Props {
 }
 
 export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, selectedFields, fieldSchema, updateRecord, editType }: Props) {
+  console.log(editType)
   const fetchCodedDomainValues = (): { [field: string]: __esri.CodedValue[] } => {
     const codedDomains = {}
     sourceFields.forEach(field => {
@@ -80,18 +81,20 @@ export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, se
     }
     setFormValues(v)
   }
+
   return <div style={{ marginTop: '12px' }}>
+    {editType === 'delete' && <h1 className="sub-nav-title" >Delete this record?</h1>}
     {
       selectedFields.map((f: string) => {
         const type = fieldSchema[f].esriType
         const alias = fieldSchema[f].alias
         let val: JSX.Element
-        if (Object.prototype.hasOwnProperty.call(codedDomains, f)) { //TODO: would a switch read better?
-          val = <CalciteSelect onCalciteSelectChange={handleChange} label={f} id={f} name={f} value={formValues[f]}>
-                {codedDomains[f].map(v => <CalciteOption selected={v.code === formValues[f]} value={v.code}>{v.name}</CalciteOption>)}
-          </CalciteSelect>
-        } else if (!editable.includes(f)) {
+        if (!editable.includes(f) || editType === 'delete') {
           val = <CalciteInput id={f} read-only value={formValues[f]}></CalciteInput>
+        } else if (Object.prototype.hasOwnProperty.call(codedDomains, f)) { //TODO: would a switch read better?
+          val = <CalciteSelect onCalciteSelectChange={handleChange} label={f} id={f} name={f} value={formValues[f]}>
+            {codedDomains[f].map(v => <CalciteOption selected={v.code === formValues[f]} value={v.code}>{v.name}</CalciteOption>)}
+          </CalciteSelect>
         } else if (type === 'esriFieldTypeString') {
           if (longFields.includes(f)) {
             val = <textarea id={f} maxLength={lengths[f]} onChange={handleChange} value={formValues[f]}> </textarea>
@@ -113,6 +116,6 @@ export default function RecordForm ({ sourceFields, cancelUpdate, dataRecord, se
       })
     }
     <CalciteButton width="half" slot="footer" appearance="outline" onClick={cancelUpdate}>Cancel</CalciteButton>
-    <CalciteButton width="half" slot="footer" onClick={onSubmit}>Submit</CalciteButton>
-  </div >
+    {editType === 'delete' ? <CalciteButton width="half" kind="danger" slot="footer" onClick={onSubmit}>Permanently Delete</CalciteButton> : <CalciteButton width="half" slot="footer" onClick={onSubmit}>Submit</CalciteButton>}
+  </div>
 }

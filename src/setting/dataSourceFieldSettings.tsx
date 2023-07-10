@@ -50,12 +50,20 @@ export default function DataSourceFields ({ parentSource, parentDisplay, source,
   const [headSelectOpen, setHeadSelectOpen] = React.useState<boolean>(false)
   const [subHeadSelectOpen, setSubHeadSelectOpen] = React.useState<boolean>(false)
 
-  const fetchNewFeaturesToggle = (): boolean => {
-    if (Object.prototype.hasOwnProperty.call(dsProp, 'newFeatures')) {
-      return !!dsProp.newFeatures
+  // const fetchNewFeaturesToggle = (): boolean => {
+  //   if (Object.prototype.hasOwnProperty.call(dsProp, 'newFeatures')) {
+  //     return !!dsProp.newFeatures
+  //   }
+  //   return false
+  // }
+
+  const fetchToggle = (val: string): boolean => {
+    if (Object.prototype.hasOwnProperty.call(dsProp, val)) {
+      return !!dsProp[val]
     }
     return false
   }
+  //TODO: combine these?
   const joinChange = (event: AdvancedSelectItem[]) => {
     const value = event ? event[0].value : null
     dsPropChange(source, 'foreignKey', value)
@@ -69,9 +77,13 @@ export default function DataSourceFields ({ parentSource, parentDisplay, source,
     const value = event ? event[0].value : null
     dsPropChange(source, 'subHeader', value)
   }
-
-  const toggleChange = (_event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
+  //TODO: combine these?
+  const newToggleChange = (_event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
     dsPropChange(source, 'newFeatures', checked)
+  }
+
+  const deleteToggleChange = (_event: ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    dsPropChange(source, 'deleteFeatures', checked)
   }
 
   const selectChange = (event: AdvancedSelectItem[]) => {
@@ -134,20 +146,39 @@ export default function DataSourceFields ({ parentSource, parentDisplay, source,
       </SettingSection>
       {!geometryType &&
         <SettingSection>
-          <div className='w-100 table-options' >
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} className='table-options-item'>
-              <span className='setting-text-level-1' style={{ width: '80%' }}>
-                Create New Records?
-              </span>
-              <Switch
-                className='can-x-switch'
-                id="newFeatures"
-                checked={fetchNewFeaturesToggle()}
-                onChange={toggleChange}
-              />
+          <SettingRow>
+            <div className='w-100 table-options' >
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} className='table-options-item'>
+                <span className='setting-text-level-1' style={{ width: '80%' }}>
+                  Create New Records
+                </span>
+                <Switch
+                  className='can-x-switch'
+                  id="newFeatures"
+                  checked={fetchToggle('newFeatures')}
+                  onChange={newToggleChange}
+                />
+              </div>
             </div>
-          </div>
-        </SettingSection>}
+          </SettingRow>
+          <SettingRow>
+            <div className='w-100 table-options' >
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} className='table-options-item'>
+                <span className='setting-text-level-1' style={{ width: '80%' }}>
+                  Delete Records
+                </span>
+                <Switch
+                  className='can-x-switch'
+                  id="deleteFeatures"
+                  checked={fetchToggle('deleteFeatures')}
+                  onChange={deleteToggleChange}
+                />
+              </div>
+            </div>
+          </SettingRow>
+        </SettingSection>
+
+      }
     </>
   } else {
     return <SettingSection title="Join field">
