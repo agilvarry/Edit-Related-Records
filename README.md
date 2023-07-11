@@ -17,7 +17,7 @@ To use this widget you can download this repository and include it in the your c
                 - Edit-Related-Records/
 ```
 
-- Follow the steps from the [Installation Guide](https://developers.arcgis.com/experience-builder/guide/install-guide/) to start building.
+Follow the steps from the [Installation Guide](https://developers.arcgis.com/experience-builder/guide/install-guide/) to start building.
 
 ## Widget Setup:
 
