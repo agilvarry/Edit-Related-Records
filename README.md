@@ -2,9 +2,15 @@
 
 This widget allows users to select a record from a layer/table and edit it and other records in related tables using the [developer edition of ArcGIS Experience builder](https://developers.arcgis.com/experience-builder/) version 1.11. Later versions may also work. It requires at least one other widget to be used to select individual records from the parent/spatial table, likely the Table widget or Map widget. 
 
+## Demo
+
+View an example use [here]([https://agilvarry.github.io/Leaflet.trace/](https://agilvarry.github.io/Edit-Related-Records/Demo/))
+
 ## Install
 
-To use this widget you can download this repository and include it in the your copy of Experience builder by [following the steps in the documentation.](https://developers.arcgis.com/experience-builder/guide/getting-started-widget/#widget-location) The folder structure below is consistent with the default in Experience builder version 1.11:
+Download the most current build from the releases page.
+
+To use this widget you can [download the most current build from the releases page](https://github.com/agilvarry/Edit-Related-Records/releases) and include it in the your copy of Experience builder by [following the steps in the documentation.](https://developers.arcgis.com/experience-builder/guide/getting-started-widget/#widget-location) The folder structure below is consistent with the default in Experience builder version 1.11:
 
 ```
 -ArcGISExperienceBuilder/
