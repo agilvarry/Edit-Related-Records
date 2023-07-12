@@ -1,0 +1,28 @@
+{
+  "name": "Edit-Related-Records",
+  "label": "Edit Related Records",
+  "type": "widget",
+  "version": "1.11.0",
+  "exbVersion": "1.11.0",
+  "author": "Alex Gilvarry",
+  "dependency": "jimu-arcgis",
+  "description": "This widget is used to get related records of a feature selected in a table or map",
+  "copyright": "",
+  "license": "http://www.apache.org/licenses/LICENSE-2.0",
+  "properties": {},
+  "translatedLocales": [
+    "en"
+  ],
+  "defaultSize": {
+    "width": 400,
+    "height": 400
+  },
+  "messageActions": [
+    {
+      "name": "Listen for Selection",
+      "label": "Listen for Selection",
+      "uri": "actions/listen-action",
+      "settingUri": null
+    }
+  ]
+}

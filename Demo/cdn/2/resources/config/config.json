@@ -1,0 +1,959 @@
+{
+  "pages": {
+    "page_0": {
+      "id": "page_0",
+      "mode": "FIT_WINDOW",
+      "type": "NORMAL",
+      "layout": {
+        "LARGE": "layout_0"
+      },
+      "isDefault": true,
+      "isVisible": true,
+      "label": "Page"
+    }
+  },
+  "layouts": {
+    "layout_0": {
+      "type": "GRID",
+      "content": {
+        "6": {
+          "setting": {
+            "type": 3,
+            "size": 50,
+            "parent": "8"
+          },
+          "type": "WIDGET",
+          "widgetId": "widget_1"
+        },
+        "8": {
+          "setting": {
+            "type": 1,
+            "size": 100,
+            "children": [
+              "6",
+              "14"
+            ]
+          }
+        },
+        "12": {
+          "setting": {
+            "type": 3,
+            "size": 50,
+            "parent": "14"
+          },
+          "type": "WIDGET",
+          "widgetId": "widget_3"
+        },
+        "13": {
+          "setting": {
+            "type": 3,
+            "parent": "14",
+            "size": 50
+          },
+          "type": "WIDGET",
+          "widgetId": "widget_4"
+        },
+        "14": {
+          "setting": {
+            "type": 0,
+            "parent": "8",
+            "size": 50,
+            "children": [
+              "12",
+              "13"
+            ]
+          }
+        }
+      },
+      "order": [],
+      "setting": {
+        "rootItem": "8"
+      }
+    },
+    "layout_1": {
+      "type": "FIXED",
+      "label": "Map FixedLayout"
+    }
+  },
+  "exbVersion": "1.11.0",
+  "mainSizeMode": "LARGE",
+  "theme": "themes/default/",
+  "forBuilderAttributes": {
+    "lockLayout": true
+  },
+  "template": "blankfullscreengrid",
+  "widgets": {
+    "widget_1": {
+      "uri": "widgets/common/table/",
+      "version": "1.11.0",
+      "label": "Table",
+      "config": {
+        "layersConfig": [
+          {
+            "id": "dataSource_1-1894b496ca5-layer-4-1",
+            "name": "UDOT Bike Lanes 2019",
+            "useDataSource": {
+              "dataSourceId": "dataSource_1-1894b496ca5-layer-4",
+              "mainDataSourceId": "dataSource_1-1894b496ca5-layer-4",
+              "rootDataSourceId": "dataSource_1",
+              "fields": [
+                "OBJECTID",
+                "ID",
+                "ROUTE_NAME",
+                "TRAVEL_DIR",
+                "START_ACCUM",
+                "END_ACCUM",
+                "BIKE_CNT",
+                "STATION",
+                "REGION",
+                "ADMIN_UNIT",
+                "BEG_LONG",
+                "BEG_LAT",
+                "BEG_ELEV",
+                "END_LONG",
+                "END_LAT",
+                "END_ELEV",
+                "COMMENTS",
+                "COLL_DATE",
+                "ROUTE_ID",
+                "ROUTE_DIR_ID",
+                "PKEY",
+                "MANDLI_BMP",
+                "MANDLI_EMP",
+                "Shape__Length"
+              ]
+            },
+            "allFields": [
+              {
+                "jimuName": "OBJECTID",
+                "name": "OBJECTID",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeOID",
+                "alias": "OBJECTID",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 0
+                }
+              },
+              {
+                "jimuName": "ID",
+                "name": "ID",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeInteger",
+                "alias": "ID",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 0
+                }
+              },
+              {
+                "jimuName": "ROUTE_NAME",
+                "name": "ROUTE_NAME",
+                "type": "STRING",
+                "esriType": "esriFieldTypeString",
+                "alias": "ROUTE_NAME",
+                "format": null
+              },
+              {
+                "jimuName": "TRAVEL_DIR",
+                "name": "TRAVEL_DIR",
+                "type": "STRING",
+                "esriType": "esriFieldTypeString",
+                "alias": "TRAVEL_DIR",
+                "format": null
+              },
+              {
+                "jimuName": "START_ACCUM",
+                "name": "START_ACCUM",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "START_ACCUM",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                }
+              },
+              {
+                "jimuName": "END_ACCUM",
+                "name": "END_ACCUM",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "END_ACCUM",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                }
+              },
+              {
+                "jimuName": "BIKE_CNT",
+                "name": "BIKE_CNT",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeInteger",
+                "alias": "BIKE_CNT",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 0
+                }
+              },
+              {
+                "jimuName": "STATION",
+                "name": "STATION",
+                "type": "STRING",
+                "esriType": "esriFieldTypeString",
+                "alias": "STATION",
+                "format": null
+              },
+              {
+                "jimuName": "REGION",
+                "name": "REGION",
+                "type": "STRING",
+                "esriType": "esriFieldTypeString",
+                "alias": "REGION",
+                "format": null
+              },
+              {
+                "jimuName": "ADMIN_UNIT",
+                "name": "ADMIN_UNIT",
+                "type": "STRING",
+                "esriType": "esriFieldTypeString",
+                "alias": "ADMIN_UNIT",
+                "format": null
+              },
+              {
+                "jimuName": "BEG_LONG",
+                "name": "BEG_LONG",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "BEG_LONG",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                }
+              },
+              {
+                "jimuName": "BEG_LAT",
+                "name": "BEG_LAT",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "BEG_LAT",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                }
+              },
+              {
+                "jimuName": "BEG_ELEV",
+                "name": "BEG_ELEV",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "BEG_ELEV",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                }
+              },
+              {
+                "jimuName": "END_LONG",
+                "name": "END_LONG",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "END_LONG",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                }
+              },
+              {
+                "jimuName": "END_LAT",
+                "name": "END_LAT",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "END_LAT",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                }
+              },
+              {
+                "jimuName": "END_ELEV",
+                "name": "END_ELEV",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "END_ELEV",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                }
+              },
+              {
+                "jimuName": "COMMENTS",
+                "name": "COMMENTS",
+                "type": "STRING",
+                "esriType": "esriFieldTypeString",
+                "alias": "COMMENTS",
+                "format": null
+              },
+              {
+                "jimuName": "COLL_DATE",
+                "name": "COLL_DATE",
+                "type": "DATE",
+                "esriType": "esriFieldTypeDate",
+                "alias": "COLL_DATE",
+                "format": null
+              },
+              {
+                "jimuName": "ROUTE_ID",
+                "name": "ROUTE_ID",
+                "type": "STRING",
+                "esriType": "esriFieldTypeString",
+                "alias": "ROUTE_ID",
+                "format": null
+              },
+              {
+                "jimuName": "ROUTE_DIR_ID",
+                "name": "ROUTE_DIR_ID",
+                "type": "STRING",
+                "esriType": "esriFieldTypeString",
+                "alias": "ROUTE_DIR_ID",
+                "format": null
+              },
+              {
+                "jimuName": "PKEY",
+                "name": "PKEY",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeInteger",
+                "alias": "PKEY",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 0
+                }
+              },
+              {
+                "jimuName": "MANDLI_BMP",
+                "name": "MANDLI_BMP",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "MANDLI_BMP",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                }
+              },
+              {
+                "jimuName": "MANDLI_EMP",
+                "name": "MANDLI_EMP",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "MANDLI_EMP",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                }
+              },
+              {
+                "jimuName": "Shape__Length",
+                "name": "Shape__Length",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "Shape__Length",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                }
+              }
+            ],
+            "tableFields": [
+              {
+                "jimuName": "OBJECTID",
+                "name": "OBJECTID",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeOID",
+                "alias": "OBJECTID",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 0
+                },
+                "editAuthority": false,
+                "editable": false,
+                "visible": false
+              },
+              {
+                "jimuName": "ID",
+                "name": "ID",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeInteger",
+                "alias": "ID",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 0
+                },
+                "editAuthority": true,
+                "editable": true,
+                "visible": false
+              },
+              {
+                "jimuName": "ROUTE_NAME",
+                "name": "ROUTE_NAME",
+                "type": "STRING",
+                "esriType": "esriFieldTypeString",
+                "alias": "ROUTE_NAME",
+                "format": null,
+                "editAuthority": true,
+                "editable": true,
+                "visible": true
+              },
+              {
+                "jimuName": "TRAVEL_DIR",
+                "name": "TRAVEL_DIR",
+                "type": "STRING",
+                "esriType": "esriFieldTypeString",
+                "alias": "TRAVEL_DIR",
+                "format": null,
+                "editAuthority": true,
+                "editable": true,
+                "visible": false
+              },
+              {
+                "jimuName": "START_ACCUM",
+                "name": "START_ACCUM",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "START_ACCUM",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                },
+                "editAuthority": true,
+                "editable": true,
+                "visible": true
+              },
+              {
+                "jimuName": "END_ACCUM",
+                "name": "END_ACCUM",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "END_ACCUM",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                },
+                "editAuthority": true,
+                "editable": true,
+                "visible": true
+              },
+              {
+                "jimuName": "BIKE_CNT",
+                "name": "BIKE_CNT",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeInteger",
+                "alias": "BIKE_CNT",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 0
+                },
+                "editAuthority": true,
+                "editable": true,
+                "visible": true
+              },
+              {
+                "jimuName": "STATION",
+                "name": "STATION",
+                "type": "STRING",
+                "esriType": "esriFieldTypeString",
+                "alias": "STATION",
+                "format": null,
+                "editAuthority": true,
+                "editable": true,
+                "visible": true
+              },
+              {
+                "jimuName": "REGION",
+                "name": "REGION",
+                "type": "STRING",
+                "esriType": "esriFieldTypeString",
+                "alias": "REGION",
+                "format": null,
+                "editAuthority": true,
+                "editable": true,
+                "visible": true
+              },
+              {
+                "jimuName": "ADMIN_UNIT",
+                "name": "ADMIN_UNIT",
+                "type": "STRING",
+                "esriType": "esriFieldTypeString",
+                "alias": "ADMIN_UNIT",
+                "format": null,
+                "editAuthority": true,
+                "editable": true,
+                "visible": false
+              },
+              {
+                "jimuName": "BEG_LONG",
+                "name": "BEG_LONG",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "BEG_LONG",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                },
+                "editAuthority": true,
+                "editable": true,
+                "visible": true
+              },
+              {
+                "jimuName": "BEG_LAT",
+                "name": "BEG_LAT",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "BEG_LAT",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                },
+                "editAuthority": true,
+                "editable": true,
+                "visible": true
+              },
+              {
+                "jimuName": "BEG_ELEV",
+                "name": "BEG_ELEV",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "BEG_ELEV",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                },
+                "editAuthority": true,
+                "editable": true,
+                "visible": true
+              },
+              {
+                "jimuName": "END_LONG",
+                "name": "END_LONG",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "END_LONG",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                },
+                "editAuthority": true,
+                "editable": true,
+                "visible": true
+              },
+              {
+                "jimuName": "END_LAT",
+                "name": "END_LAT",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "END_LAT",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                },
+                "editAuthority": true,
+                "editable": true,
+                "visible": true
+              },
+              {
+                "jimuName": "END_ELEV",
+                "name": "END_ELEV",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "END_ELEV",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                },
+                "editAuthority": true,
+                "editable": true,
+                "visible": true
+              },
+              {
+                "jimuName": "COMMENTS",
+                "name": "COMMENTS",
+                "type": "STRING",
+                "esriType": "esriFieldTypeString",
+                "alias": "COMMENTS",
+                "format": null,
+                "editAuthority": true,
+                "editable": true,
+                "visible": false
+              },
+              {
+                "jimuName": "COLL_DATE",
+                "name": "COLL_DATE",
+                "type": "DATE",
+                "esriType": "esriFieldTypeDate",
+                "alias": "COLL_DATE",
+                "format": null,
+                "editAuthority": true,
+                "editable": true,
+                "visible": true
+              },
+              {
+                "jimuName": "ROUTE_ID",
+                "name": "ROUTE_ID",
+                "type": "STRING",
+                "esriType": "esriFieldTypeString",
+                "alias": "ROUTE_ID",
+                "format": null,
+                "editAuthority": true,
+                "editable": true,
+                "visible": false
+              },
+              {
+                "jimuName": "ROUTE_DIR_ID",
+                "name": "ROUTE_DIR_ID",
+                "type": "STRING",
+                "esriType": "esriFieldTypeString",
+                "alias": "ROUTE_DIR_ID",
+                "format": null,
+                "editAuthority": true,
+                "editable": true,
+                "visible": false
+              },
+              {
+                "jimuName": "PKEY",
+                "name": "PKEY",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeInteger",
+                "alias": "PKEY",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 0
+                },
+                "editAuthority": true,
+                "editable": true,
+                "visible": false
+              },
+              {
+                "jimuName": "MANDLI_BMP",
+                "name": "MANDLI_BMP",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "MANDLI_BMP",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                },
+                "editAuthority": true,
+                "editable": true,
+                "visible": false
+              },
+              {
+                "jimuName": "MANDLI_EMP",
+                "name": "MANDLI_EMP",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "MANDLI_EMP",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                },
+                "editAuthority": true,
+                "editable": true,
+                "visible": false
+              },
+              {
+                "jimuName": "Shape__Length",
+                "name": "Shape__Length",
+                "type": "NUMBER",
+                "esriType": "esriFieldTypeDouble",
+                "alias": "Shape__Length",
+                "format": {
+                  "digitSeparator": false,
+                  "places": 6
+                },
+                "editAuthority": false,
+                "editable": false,
+                "visible": false
+              }
+            ],
+            "enableAttachements": false,
+            "enableEdit": false,
+            "allowCsv": false,
+            "enableSearch": false,
+            "searchFields": "",
+            "enableRefresh": true,
+            "enableSelect": true,
+            "selectMode": "SINGLE"
+          }
+        ],
+        "arrangeType": "TABS"
+      },
+      "id": "widget_1",
+      "useDataSources": [
+        {
+          "dataSourceId": "dataSource_1-1894b496ca5-layer-4",
+          "mainDataSourceId": "dataSource_1-1894b496ca5-layer-4",
+          "rootDataSourceId": "dataSource_1",
+          "fields": [
+            "OBJECTID",
+            "ID",
+            "ROUTE_NAME",
+            "TRAVEL_DIR",
+            "START_ACCUM",
+            "END_ACCUM",
+            "BIKE_CNT",
+            "STATION",
+            "REGION",
+            "ADMIN_UNIT",
+            "BEG_LONG",
+            "BEG_LAT",
+            "BEG_ELEV",
+            "END_LONG",
+            "END_LAT",
+            "END_ELEV",
+            "COMMENTS",
+            "COLL_DATE",
+            "ROUTE_ID",
+            "ROUTE_DIR_ID",
+            "PKEY",
+            "MANDLI_BMP",
+            "MANDLI_EMP",
+            "Shape__Length"
+          ]
+        }
+      ],
+      "dataActions": {
+        "showOnMap": {
+          "config": {
+            "isUseCustomSymbol": true,
+            "symbolOption": {
+              "pointSymbol": {
+                "type": "esriSMS",
+                "color": [
+                  255,
+                  255,
+                  0,
+                  150
+                ],
+                "angle": 0,
+                "xoffset": 0,
+                "yoffset": 0,
+                "size": 12,
+                "style": "esriSMSCircle",
+                "outline": {
+                  "type": "esriSLS",
+                  "color": [
+                    255,
+                    255,
+                    0,
+                    150
+                  ],
+                  "width": 1,
+                  "style": "esriSLSSolid"
+                }
+              },
+              "polylineSymbol": {
+                "type": "esriSLS",
+                "color": [
+                  255,
+                  255,
+                  0,
+                  150
+                ],
+                "width": 0.75,
+                "style": "esriSLSSolid"
+              },
+              "polygonSymbol": {
+                "type": "esriSFS",
+                "color": [
+                  255,
+                  255,
+                  0,
+                  150
+                ],
+                "outline": {
+                  "type": "esriSLS",
+                  "color": [
+                    255,
+                    255,
+                    0,
+                    150
+                  ],
+                  "width": 1,
+                  "style": "esriSLSSolid"
+                },
+                "style": "esriSFSSolid"
+              }
+            }
+          }
+        }
+      }
+    },
+    "widget_3": {
+      "uri": "widgets/Edit-Related-Records/",
+      "version": "1.11.0",
+      "label": "Edit Related Records",
+      "config": {
+        "dsProps": {
+          "dataSource_1-1894b496ca5-layer-4": {
+            "label": "Bike Lanes",
+            "foreignKey": "GlobalID"
+          },
+          "dataSource_1-1894b496ca7-layer-6": {
+            "label": "Comments",
+            "foreignKey": "parentID",
+            "header": "Comments",
+            "newFeatures": true,
+            "deleteFeatures": true
+          },
+          "dataSource_1-1894b496ca6-layer-5": {
+            "label": "Utility Company Info",
+            "foreignKey": "ParentID",
+            "header": "Company_Name",
+            "newFeatures": true,
+            "deleteFeatures": true
+          }
+        },
+        "parentDataSource": "dataSource_1-1894b496ca5-layer-4",
+        "displayParent": false
+      },
+      "id": "widget_3",
+      "useDataSources": [
+        {
+          "dataSourceId": "dataSource_1-1894b496ca5-layer-4",
+          "mainDataSourceId": "dataSource_1-1894b496ca5-layer-4",
+          "rootDataSourceId": "dataSource_1"
+        },
+        {
+          "dataSourceId": "dataSource_1-1894b496ca7-layer-6",
+          "mainDataSourceId": "dataSource_1-1894b496ca7-layer-6",
+          "rootDataSourceId": "dataSource_1",
+          "fields": [
+            "Comments"
+          ]
+        },
+        {
+          "dataSourceId": "dataSource_1-1894b496ca6-layer-5",
+          "mainDataSourceId": "dataSource_1-1894b496ca6-layer-5",
+          "rootDataSourceId": "dataSource_1",
+          "fields": [
+            "Company_Name",
+            "Date",
+            "Notes"
+          ]
+        }
+      ]
+    },
+    "widget_4": {
+      "uri": "widgets/arcgis/arcgis-map/",
+      "version": "1.11.0",
+      "label": "Map",
+      "config": {
+        "toolConfig": {
+          "canZoom": true,
+          "canHome": true,
+          "canSearch": true,
+          "canNavigation": true,
+          "canMeasure": true,
+          "canBaseMap": false
+        },
+        "isUseCustomMapState": true,
+        "initialMapState": {
+          "viewPoint": {
+            "rotation": 0,
+            "scale": 288895.2771445,
+            "targetGeometry": {
+              "spatialReference": {
+                "wkid": 102100
+              },
+              "x": -12460289.204892587,
+              "y": 4960332.367607661
+            }
+          },
+          "extent": {
+            "spatialReference": {
+              "wkid": 102100
+            },
+            "xmin": -12509208.902995119,
+            "ymin": 4929872.2118360065,
+            "xmax": -12411369.506790055,
+            "ymax": 4990792.523379315
+          },
+          "rotation": 0,
+          "viewType": "2d"
+        },
+        "initialMapDataSourceID": "dataSource_1"
+      },
+      "id": "widget_4",
+      "layouts": {
+        "MapFixedLayout": {
+          "LARGE": "layout_1"
+        }
+      },
+      "useDataSources": [
+        {
+          "dataSourceId": "dataSource_1",
+          "mainDataSourceId": "dataSource_1"
+        }
+      ]
+    }
+  },
+  "widgetsManifest": {},
+  "views": {},
+  "sections": {},
+  "dialogs": {},
+  "dataSources": {
+    "dataSource_1": {
+      "id": "dataSource_1",
+      "type": "WEB_MAP",
+      "sourceLabel": "Bike Lanes Demo",
+      "itemId": "fdfb3910cbc24979ae3c43c23e065008",
+      "portalUrl": "https://uplan.maps.arcgis.com"
+    }
+  },
+  "messageConfigs": {
+    "messageConfig_1": {
+      "id": "messageConfig_1",
+      "widgetId": "widget_1",
+      "messageType": "DATA_RECORDS_SELECTION_CHANGE",
+      "actions": [
+        {
+          "actionId": "widget_3-Listen for Selection-1689189841042",
+          "widgetId": "widget_3",
+          "messageWidgetId": "widget_1",
+          "actionName": "Listen for Selection",
+          "description": null,
+          "version": "1.11.0"
+        }
+      ]
+    },
+    "messageConfig_2": {
+      "id": "messageConfig_2",
+      "widgetId": "widget_4",
+      "messageType": "DATA_RECORDS_SELECTION_CHANGE",
+      "actions": [
+        {
+          "actionId": "widget_3-Listen for Selection-1689189847568",
+          "widgetId": "widget_3",
+          "messageWidgetId": "widget_4",
+          "actionName": "Listen for Selection",
+          "description": null,
+          "version": "1.11.0"
+        }
+      ]
+    }
+  },
+  "attributes": {
+    "portalUrl": "https://uplan.maps.arcgis.com"
+  },
+  "sharedThemeVariables": {
+    "header": {},
+    "body": {},
+    "button": {},
+    "logo": {}
+  },
+  "originExbVersion": "1.11.0",
+  "pageStructure": [
+    {
+      "page_0": []
+    }
+  ],
+  "timestamp": 1689191346688
+}

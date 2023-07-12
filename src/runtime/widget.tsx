@@ -13,10 +13,9 @@ interface StateProps {
 export default function Widget (props: AllWidgetProps<{}>) {
   const stateProps = props.stateProps || {} as StateProps
   const config = props.config as Config
-
+  const parentForeignKey = config.dsProps[config.parentDataSource].foreignKey
   const selectedFeatureIdMatch = async (id: string): Promise<boolean> => {
     console.log(id)
-    const parentForeignKey = config.dsProps[config.parentDataSource].foreignKey
     const ds = dss.filter(ds => ds.id === config.parentDataSource)[0]
     await ds.ready()
     const ids = ds.getSelectedRecords().map(r => r.getData()[parentForeignKey])
@@ -26,7 +25,8 @@ export default function Widget (props: AllWidgetProps<{}>) {
   const [dss, setDss] = React.useState<FeatureLayerDataSource[]>(null)
   const dsm = DataSourceManager.getInstance()
   const selection = Object.prototype.hasOwnProperty.call(stateProps, 'selection') ? stateProps.selection : null
-  const globalId = selection && selection.sourceId === config.parentDataSource && selectedFeatureIdMatch(selection.selectionId) ? selection.selectionId : null
+  console.log(selection)
+  const globalId = selection && selection.sourceId === config.parentDataSource && selectedFeatureIdMatch(selection.data[parentForeignKey]) ? selection.data[parentForeignKey] : null
 
   React.useEffect(() => {
     const fetchDss = () => {

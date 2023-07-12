@@ -19,7 +19,6 @@ interface Props {
   parentDisplay: () => boolean
 }
 export default function DataSourceFields ({ parentSource, parentDisplay, source, geometryType, fieldSchema, selectedSchema, dsProp, dsPropChange, onFieldChange }: Props) {
-  const idTypes = ['oid', 'global-id', 'guid']
   const [fieldSelectOpen, setFieldSelectOpen] = React.useState<boolean>(false)
   /**
    * These only exist becasue it allows me to update my selects. need a better solution
@@ -39,10 +38,9 @@ export default function DataSourceFields ({ parentSource, parentDisplay, source,
     }
     return null
   }
-  const selectableValues = makeAdvancedSelectItems(fieldSchema.filter(s => !idTypes.includes(s.type)))
+  const selectableValues = makeAdvancedSelectItems(fieldSchema)
   const selectedValues = makeAdvancedSelectItems(selectedSchema)
-  const idValues = makeAdvancedSelectItems(fieldSchema.filter(s => idTypes.includes(s.type)))
-  const foreignKeySelect = idValues.filter(v => v.value === fetchProp('foreignKey'))
+  const foreignKeySelect = selectableValues.filter(v => v.value === fetchProp('foreignKey'))
   const headerSelect = selectableValues.filter(v => v.value === fetchProp('header'))
   const subHeaderSelect = selectableValues.filter(v => v.value === fetchProp('subHeader'))
 
@@ -98,7 +96,7 @@ export default function DataSourceFields ({ parentSource, parentDisplay, source,
             fluid
             strategy={'fixed'}
             selectedValues={foreignKeySelect}
-            staticValues={idValues}
+            staticValues={selectableValues}
             onChange={joinChange}
             isOpen={joinSelectOpen}
             toggle={(isOpen) => setJoinSelectOpen(isOpen)}
@@ -187,7 +185,7 @@ export default function DataSourceFields ({ parentSource, parentDisplay, source,
           fluid
           strategy={'fixed'}
           selectedValues={foreignKeySelect}
-          staticValues={idValues}
+          staticValues={selectableValues}
           onChange={joinChange}
           isOpen={joinSelectOpen}
           toggle={(isOpen) => setJoinSelectOpen(isOpen)}
