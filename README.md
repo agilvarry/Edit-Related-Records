@@ -4,7 +4,7 @@ This widget allows users to select a record from a layer/table and edit it and o
 
 ## Demo
 
-View an example use [here](https://agilvarry.github.io/Edit-Related-Records/Demo/)
+View an example use [here](https://agilvarry.github.io/Edit-Related-Records/Demo/).
 
 ## Install
 
