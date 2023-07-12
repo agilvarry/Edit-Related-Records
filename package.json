@@ -1,6 +1,6 @@
 {
   "name": "edit-related-records",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "ArcGIS Experience builder Widget for editing related tables in a form",
   "main": "widget.tsx",
   "scripts": {
